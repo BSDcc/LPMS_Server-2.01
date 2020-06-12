@@ -3,9 +3,12 @@ program LPMS_Server;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+//  {$IFDEF UNIX}{$IFDEF UseCThreads}
+//  cthreads,
+//  {$ENDIF}{$ENDIF}
+  {$IFDEF UNIX}
   cthreads,
-  {$ENDIF}{$ENDIF}
+  {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, LPMS_Main, indylaz
   { you can add units after this };
