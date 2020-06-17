@@ -3,6 +3,7 @@ object FLPMS_Main: TFLPMS_Main
   Height = 515
   Top = 207
   Width = 868
+  ActiveControl = pnlLog
   Caption = 'FLPMS_Main'
   ClientHeight = 494
   ClientWidth = 868

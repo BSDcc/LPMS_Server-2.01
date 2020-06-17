@@ -34,16 +34,16 @@ uses
    {$IFDEF CPUARMHF}                 // Running on ARM (Raspbian) architecture
       mysql55conn;
    {$ELSE}                           // Running on Intel architecture
-      mysql57conn, IdCustomTCPServer;
+      mysql57conn;
    {$ENDIF}
 {$ENDIF}
 
 {$IFDEF DARWIN}                      // Target is macOS
-   IniFiles,
-   {$IFDEF CPUI386}                  // Running on older hardwae e.g. i386
-      mysql55conn;
-   {$ELSE}                           // Running on newer hardware e.g.x86_64
-      mysql57conn;
+   IniFiles, Zipper, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
+  {$IFDEF CPUI386}                   // Running on old hardware i.e. i386 - Widget set must be Carbon
+      mysql55conn, Interfaces;
+   {$ELSE}                           // Running on x86_64 - Widget set must be Cocoa
+      mysql57conn, Interfaces;
    {$ENDIF}
 {$ENDIF}
 
@@ -169,6 +169,10 @@ type
     procedure ShowLPMSServerClick(Sender: TObject);
     procedure tcpServerConnect(AContext: TIdContext);
     procedure tcpServerExecute(AContext: TIdContext);
+    procedure ToolsLogExecute(Sender: TObject);
+    procedure ToolsMinimiseExecute(Sender: TObject);
+    procedure ToolsPropertiesExecute(Sender: TObject);
+    procedure ToolsRestoreExecute(Sender: TObject);
 
 type
 
@@ -179,17 +183,17 @@ type
       Bottom : integer;
    end;
 
-  REC_LPMS_Layout = record
-     Width    : integer;
-     Height   : integer;
-     State    : integer;
-     Position : REC_LPMS_Pos;
-  end;
+   REC_LPMS_Layout = record
+      Width    : integer;
+      Height   : integer;
+      State    : integer;
+      Position : REC_LPMS_Pos;
+   end;
 
-procedure ToolsLogExecute(Sender: TObject);
-procedure ToolsMinimiseExecute(Sender: TObject);
-procedure ToolsPropertiesExecute(Sender: TObject);
-procedure ToolsRestoreExecute(Sender: TObject);
+{$IFDEF DARWIN}
+{$INCLUDE '../BSD_Utilities/BSD_Utilities_01.inc'}
+{$ENDIF}
+
 private  { Private Declarations }
 
    ButtonLegend     : integer;      //
@@ -215,7 +219,7 @@ private  { Private Declarations }
    LastMsg          : string;       //
    LocalPath        : string;       // Dir where Log, Config File and Back Instructions File are stored
    LogPath          : string;       //
-//   NewKey           : string;       //
+   NewKey           : string;       // Holds the new generated Key if a user requesting a new key is successfully identified
    NewPrefix        : string;       //
    OSName           : string;       // Holds the name of the Platform we are running on
    OSShort          : string;       // Holds the short name of the Platform we are running on
@@ -246,14 +250,17 @@ private  { Private Declarations }
    {$ENDIF}
 {$ENDIF}
 
-{$IFDEF DARWIN}                    // Target is macOS
-   {$IFDEF CPUI386}                // Running on older hardware e.g. i386
-      SQLCon : TMySQL55Connection;
-   {$ELSE}                         // Running on newer hardware e.g. x86_64
-      SQLCon : TMySQL57Connection;
-   {$ENDIF}
+{$IFDEF DARWIN}
+
+   This_Key_Values : REC_Key_Values;
+   This_Key_Priv   : REC_Key_Priv;
+
+{$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
+
 {$ENDIF}
 
+//   function  GetUser(CurrentKey, CompanyCode, Unique1, Unique2, Unique3, Unique4, Unique5, Unique6 : string): boolean;
+   function  GetUser(ThisList: TStringList): boolean;
    procedure DispLogMsg(ThisMsg: string);
    procedure DispLogMsg(ThisDate, ThisTime, ThisMsg: string);
    procedure OpenLog(FileName: string);
@@ -269,6 +276,8 @@ public   { Public Declarations }
 
 end;
 
+{$IFNDEF DARWIN}
+
 //------------------------------------------------------------------------------
 // Global variables
 //------------------------------------------------------------------------------
@@ -282,12 +291,67 @@ const
    TYPE_LOAD    : integer = 2;
    SERVER_DELIM : char = '|';
 
+type
+
+   REC_Key_Priv = record
+      Key              : string;
+      DaysLeft         : integer;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Options4    : boolean;
+      License          : integer;
+      DBPrefix         : string;
+      Unique           : string;
+      KeyDate          : string;
+   end;
+
+   REC_Key_Values = record
+      Unique           : string;
+      ExpDate          : string;
+      DBPrefix         : string;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Options4    : boolean;
+      License          : integer;
+   end;
+
+var
+   FLPMS_Main: TFLPMS_Main;
+
+//--- Utilities contained in BSD_Utilities.dll
+
+{$IFDEF LINUX}
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'libbsd_utilities';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'libbsd_utilities';
+{$ENDIF}
+{$IFDEF WINDOWS}
+   function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
+   function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'BSD_Utilities';
+{$ENDIF}
+
+implementation
+
+{$R *.lfm}
+
+{$ElSE}
+
+//------------------------------------------------------------------------------
+// Global variables
+//------------------------------------------------------------------------------
 var
    FLPMS_Main: TFLPMS_Main;
 
 implementation
 
 {$R *.lfm}
+
+{$DEFINE LPMS_Server_Main}
+{$INCLUDE '../BSD_Utilities/BSD_Utilities.lpr'}
+{$UNDEF LPMMS_Server_Main}
+
+{$ENDIF}
 
 { TFLPMS_Main }
 
@@ -916,10 +980,19 @@ const
    SERVER_REQMSG      = 2;
    SERVER_REQFEES     = 3;
    SERVER_REQREGISTER = 4;
+   REPLY_SUCCESS      = 0;
+   REPLY_FAIL         = 1;
+   REPLY_NOUPDATE     = 2;
+   ACTION_UPDATEREG   = 1;
+   ACTION_DISPMSG     = 2;
+   ACTION_DOXFER      = 3;
+   ACTION_DOWNLOAD    = 4;
+   ACTION_OPEN        = 5;
 
 var
-   Request, CodedReq  : string;
-   ThisList           : TStringList;
+   idx1                               : integer;
+   Request, CodedReq, ThisMsg, Delim  : string;
+   ThisList, ThisReply                : TStringList;
 
 begin
 
@@ -931,81 +1004,85 @@ begin
       CodedReq := AContext.Connection.IOHandler.ReadLn();
       Request := Vignere(CYPHER_DEC,CodedReq,SecretPhrase);
 
-
-         case StrToInt(Request.SubString(0,1)) of
-            SERVER_REQKEY: begin
+      case StrToInt(Request.SubString(0,1)) of
+         SERVER_REQKEY: begin
 
 //--- Display the information we received
 
-               ThisList := Disassemble(Request,TYPE_PLAIN);
-               DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Received request for a key update:');
-               DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Current key: ' + ThisList.Strings[1]);
-//               DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Company code: ' + ThisList.Strings[2]);
+            ThisList := Disassemble(Request,TYPE_PLAIN);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Received request for a key update:');
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Current key: ' + ThisList.Strings[1]);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Company code: ' + ThisList.Strings[2]);
+
+            ThisMsg := '';
+            Delim   := '';
+
+//--- Extract the MAC Addresses
+
+            for idx1 := 3 to ThisList.Count - 1 do begin
+
+               ThisMsg := ThisMsg + Delim + ThisList.Strings[idx1];
+               Delim := ', ';
 
             end;
 
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Unique Identifier(s): ' + ToUpper(ThisMsg));
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Checking user record for ''' + ThisList.Strings[2] + ''':');
+
+//--- Process the request
+
+//            if GetUser(ThisList.Strings[1],ThisList.Strings[2],ThisList.Strings[3],ThisList.Strings[4],ThisList.Strings[5],ThisList.Strings[6],ThisList.Strings[7],ThisList.Strings[8]) = True then begin
+            if GetUser(ThisList) = True then begin
+
+               ThisReply := TStringList.Create;
+
+               ThisReply.Add(IntToStr(REPLY_SUCCESS));
+               ThisReply.Add('Unlock Key successfully generated and updated');
+               ThisReply.Add(IntToStr(ACTION_UPDATEREG));
+               ThisReply.Add('Key');
+               ThisReply.Add(NewKey);
+               ThisReply.Add(IntToStr(ACTION_DISPMSG));
+               ThisReply.Add('New Unlock Key is ''' + NewKey + '''');
+
+               if DoXfer = True then begin
+
+                  ThisReply.Add(IntToStr(ACTION_DOXFER));
+                  ThisReply.Add(NewPrefix);
+                  ThisReply.Add(IntToStr(ACTION_DISPMSG));
+                  ThisReply.Add('Registration transferred to ''' + NewPrefix + ''' - Please restart LPMS');
+
+               end;
+
+               AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+
+               ThisReply.Destroy;
+
+            end else begin
+
+               try
+
+                  ThisReply := TStringList.Create;
+
+                  ThisReply.Add(IntToStr(REPLY_FAIL));
+                  ThisReply.Add('Invalid Request');
+                  ThisReply.Add(IntToStr(ACTION_DISPMSG));
+                  ThisReply.Add(LastMsg + ' - Please contact BlueCrane Software Development by sending an email to ' + ThisEmail + ' describing the events that lead up to this message');
+                  AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+
+               finally
+
+                  ThisReply.Destroy;
+
+               end;
+
+            end;
+
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Key update request completed');
+
          end;
-{
-           case SERVER_REQKEY:
-   //--- Display the information we received
 
-              ThisList = Disassemble(Request.c_str(),TYPE_PLAIN);
-              DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Received request for a key update:");
-              DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Current key: " + ThisList->Strings[1]);
-              DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Company code: " + ThisList->Strings[2]);
+      end;
 
-              ThisMsg   = "";
-              for (idx1 = 0; idx1 < 6; idx1++)
-              {
-                 if (ThisList->Strings[idx1 + 3] == "")
-                    break;
-
-                 ThisMsg += ThisList->Strings[idx1 + 3] + ", ";
-              }
-
-              ThisMsg.SetLength(ThisMsg.Length() - 2);
-
-              DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Unique Identifier(s): " + ThisMsg.UpperCase());
-              DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Checking user record for '" + ThisList->Strings[2] + "':");
-
-   //--- Process the request
-
-              if (GetUser(ThisList->Strings[1],ThisList->Strings[2],ThisList->Strings[3],ThisList->Strings[4],ThisList->Strings[5],ThisList->Strings[6],ThisList->Strings[7],ThisList->Strings[8]) == true)
-              {
-                 ThisReply = new TStringList;
-
-                 ThisReply->Add(IntToStr(REPLY_SUCCESS));
-                 ThisReply->Add("Unlock Key successfully generated and updated");
-                 ThisReply->Add(IntToStr(ACTION_UPDATEREG));
-                 ThisReply->Add("Key");
-                 ThisReply->Add(NewKey);
-                 ThisReply->Add(IntToStr(ACTION_DISPMSG));
-                 ThisReply->Add("New Unlock Key is '" + NewKey + "'");
-                 if (DoXfer == true)
-                 {
-                    ThisReply->Add(IntToStr(ACTION_DOXFER));
-                    ThisReply->Add(NewPrefix);
-                    ThisReply->Add(IntToStr(ACTION_DISPMSG));
-                    ThisReply->Add("Registration transferred to '" + NewPrefix + "' - Please restart LPMS");
-                 }
-                 AContext->Connection->IOHandler->WriteLn(Assemble(ThisReply,TYPE_CODED));
-
-                 delete ThisReply;
-              }
-              else
-              {
-                 ThisReply = new TStringList;
-
-                 ThisReply->Add(IntToStr(REPLY_FAIL));
-                 ThisReply->Add("Invalid Request");
-                 ThisReply->Add(IntToStr(ACTION_DISPMSG));
-                 ThisReply->Add(LastMsg + " - Please contact BlueCrane Software Development by sending an email to " + ThisEmail + " describing the events that lead up to this message");
-                 AContext->Connection->IOHandler->WriteLn(Assemble(ThisReply,TYPE_CODED));
-
-                 delete ThisReply;
-              }
-              DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Key update request completed");
-}
    end;
 
 {
@@ -1322,6 +1399,283 @@ begin
 end;
 
 //---------------------------------------------------------------------------
+// Function to retrieve the requesting user's information from the Database
+//---------------------------------------------------------------------------
+//function TFLPMS_Main.GetUser(CurrentKey, CompanyCode, Unique1, Unique2, Unique3, Unique4, Unique5, Unique6: string): boolean;
+function TFLPMS_Main.GetUser(ThisList: TStringList): boolean;
+const
+   CURKEY           = 1;
+   COMPCD           = 2;
+   UNIQUE           = 3;
+//   LICTYPE_INVALID  = 0;
+   LICTYPE_TRIAL    = 1;
+//   LICTYPE_PERSONAL = 2;
+//   LICTYPE_BROWSE   = 3;
+//   LICTYPE_GENERIC  = 4;
+
+
+var
+   UserRenewals, UserXfer, UserNewLicense, Interval : integer;
+   DaysLeft, idx1                                   : integer;
+   UserBlocked, CompBlocked, Found                  : boolean;
+   UserUnique, UserExpiry, UserKey, CompName        : string;
+   UserNewPrefix, S1, S2, S3, S4, S5, S6            : string;
+   This_Key_Priv                                    : REC_Key_Priv;
+   This_Key_Info                                    : REC_Key_Values;
+
+begin
+
+   Result := False;
+
+   S6 := ' AND (LPMSKey_Unique = ''' + ThisList.Strings[UNIQUE] + '''';
+
+   for idx1 := 4 to ThisList.Count - 1 do
+      S6 := S6 + ' OR LPMSKEY_Unique = ''' + ThisList.Strings[idx1] + '''';
+
+   S6 := S6 + ')';
+
+   S1 := 'SELECT * FROM users WHERE LPMSKey_Prefix = ''' + ThisList.Strings[COMPCD] + '''' + S6;
+
+   S3 := 'SELECT LPMSKey_Name, LPMSKey_Blocked, LPMSKey_Interval FROM companies WHERE LPMSKey_Prefix = ''' +
+        ThisList.Strings[COMPCD] + '''';
+
+   FLPMS_Main.Cursor := crHourGlass;
+   DoXfer := false;
+   S2 := '';
+
+//--- Get the user related information
+
+   try
+
+      SQLQry1.Close();
+      SQLQry1.SQL.Text := S1;
+      SQLQry1.Open();
+
+      Except on Err : Exception do begin
+
+         LastMsg := '      **Unexpected Data Base [User] error: ''' + Err.Message + '''';
+         DispLogMsg(ThreadNum + ' ' + LastMsg);
+         FLPMS_Main.Cursor := crDefault;
+         Exit;
+
+      end;
+
+   end;
+
+   if SQLQry1.RecordCount = 1 then begin
+
+      UserRenewals   := SQLQry1.FieldByName('LPMSKey_Renewals').AsInteger;
+      UserBlocked    := SQLQry1.FieldByName('LPMSKey_Blocked').AsBoolean;
+      UserUnique     := SQLQry1.FieldByName('LPMSKey_Unique').AsString;
+      UserExpiry     := SQLQry1.FieldByName('LPMSKey_ExpiryDate').AsString;
+      UserKey        := SQLQry1.FieldByName('LPMSKey_Activation').AsString;
+      UserNewPrefix  := SQLQry1.FieldByName('LPMSKey_NewPrefix').AsString;
+      UserNewLicense := SQLQry1.FieldByName('LPMSKey_NewLicense').AsInteger;
+      UserXfer       := SQLQry1.FieldByName('LPMSKey_Transfer').AsInteger;
+
+   end else begin
+
+      LastMsg := '      **User not found - request denied';
+      DispLogMsg(ThreadNum + ' ' + LastMsg);
+      FLPMS_Main.Cursor := crDefault;
+      Exit;
+
+   end;
+
+//--- Get the company related information
+
+   try
+
+      SQLQry1.Close();
+      SQLQry1.SQL.Text := S3;
+      SQLQry1.Open();
+
+      Except on Err : Exception do begin
+
+         LastMsg := '      **Unexpected Data Base [Company] error: ''' + Err.Message + '''';
+         DispLogMsg(ThreadNum + ' ' + LastMsg);
+         FLPMS_Main.Cursor := crDefault;
+         Exit;
+
+      end;
+
+   end;
+
+   if SQLQry1.RecordCount = 1 then begin
+
+      CompBlocked := SQLQry1.FieldByName('LPMSKey_Blocked').AsBoolean;
+//      CompName    := SQLQry1.FieldByName('LPMSKey_Name').AsString;
+      Interval    := SQLQry1.FieldByName('LPMSKey_Interval').AsInteger;
+
+   end else begin
+
+      LastMsg := '      **Company record not found - request denied';
+      DispLogMsg(ThreadNum + ' ' + LastMsg);
+      FLPMS_Main.Cursor := crDefault;
+      Exit;
+
+   end;
+
+//--- If we get here then all the information is there - check some vital detail
+
+   if (CompBlocked = True or UserBlocked = True) then begin
+
+      LastMsg := '      **Record cannot be renewed. Flags are CpyBlocked = ' + BoolToStr(CompBlocked) + ', UserBlocked = ' + BoolToStr(UserBlocked) + ' - request denied';
+      DispLogMsg(ThreadNum + ' ' + LastMsg);
+      FLPMS_Main.Cursor := crDefault;
+      Exit;
+
+   end;
+
+{
+   if ThisList.Strings[CURKEY] <> UserKey then begin
+
+      LastMsg := '      **Record cannot be renewed. User''s current key does not match the key on record - request denied';
+      DispLogMsg(ThreadNum + ' ' + LastMsg);
+      FLPMS_Main.Cursor := crDefault;
+      Exit;
+
+   end;
+}
+
+   This_Key_Priv.Key      := UserKey;
+   This_Key_Priv.DaysLeft := 0;
+
+   DaysLeft := DoDecode(This_Key_Priv);
+
+   if ((DaysLeft < -1) or (ThisList.Strings[CURKEY] <> UserKey) or (This_Key_Priv.DBPrefix <> ThisList.Strings[COMPCD])) then begin
+
+      DispLogMsg(ThreadNum + '       **Suspect activation key received. Flags:');
+      DispLogMsg(ThreadNum + '          ReturnCode = ''' + IntToStr(DaysLeft) + '''');
+      DispLogMsg(ThreadNum + '          DaysLeft = ''' + IntToStr(This_Key_Priv.DaysLeft) + '''');
+      DispLogMsg(ThreadNum + '          CompanyCode = ''' + ThisList.Strings[COMPCD] + ''', DBPrefix = ''' + This_Key_Priv.DBPrefix + '''');
+      DispLogMsg(ThreadNum + '          GeneratedKey = ''' + ThisList.Strings[CURKEY] + ''', UserKey = ''' + UserKey + '''');
+      DispLogMsg(ThreadNum + '       **Request denied');
+      FLPMS_Main.Cursor := crDefault;
+      LastMsg := '      **Suspect activation key received.';
+      Exit;
+
+   end;
+
+   if This_Key_Priv.DaysLeft > 21 then begin
+
+      DispLogMsg(ThreadNum + '       **Attempt to renew a key with more than 21 days before expiry received. Flags:');
+      DispLogMsg(ThreadNum + '          ReturnCode = ''' + IntToStr(DaysLeft) + '''');
+      DispLogMsg(ThreadNum + '          DaysLeft = ''' + IntToStr(This_Key_Priv.DaysLeft) + '''');
+      DispLogMsg(ThreadNum + '          CompanyCode = ''' + ThisList.Strings[COMPCD] + ''', DBPrefix = ''' + This_Key_Priv.DBPrefix + '''');
+      DispLogMsg(ThreadNum + '          GeneratedKey = ''' + ThisList.Strings[CURKEY] + ''', UserKey = ''' + UserKey + '''');
+      DispLogMsg(ThreadNum + '       **Request denied');
+      FLPMS_Main.Cursor := crDefault;
+      LastMsg := '      **Key cannot be renewed as it is still valid - request denied.';
+      Exit;
+
+   end;
+
+   Found := False;
+
+   for idx1 := 2 to ThisList.Count -1 do begin
+
+      if ThisList.Strings[idx1] = UserUnique then
+         Found := True;
+
+   end;
+
+   if Found = False then begin
+
+      LastMsg := '      **Record cannot be renewed. Unique identifier does not match - request denied';
+      DispLogMsg(ThreadNum + ' ' + LastMsg);
+      FLPMS_Main.Cursor := crDefault;
+      Exit;
+
+   end;
+
+//--- If this is an evaluation key and the transfer flag is not set then it
+//---    cannot be renewed
+
+   if ((This_Key_Priv.License = LICTYPE_TRIAL) and (UserXfer = 0)) then begin
+
+      LastMsg := '      **Record cannot be renewed. Provided key is a trial key - request denied';
+      DispLogMsg(ThreadNum + ' ' + LastMsg);
+      FLPMS_Main.Cursor := crDefault;
+      Exit;
+
+   end;
+
+//--- Check whether the key record is marked for transfer
+
+   if UserXfer = 1 then begin
+
+      DoXfer := true;
+      This_Key_Priv.DBPrefix := UserNewPrefix;
+      This_Key_Priv.License  := UserNewLicense;
+
+      S2 := ', LPMSKey_Transfer = 0, LPMSKey_LicType = ' + IntToStr(UserNewLicense) + ', LPMSKey_Prefix = ''' + UserNewPrefix + '''';
+
+   end;
+
+//--- All checks passed - this key can be renewed
+
+   This_Key_Info.Unique           := This_Key_Priv.Unique;
+   This_Key_Info.ExpDate          := FormatDateTime('yyyy/MM/dd',(Date() + Interval));
+   This_Key_Info.DBPrefix         := This_Key_Priv.DBPrefix;
+   This_Key_Info.LPMS_Collections := This_Key_Priv.LPMS_Collections;
+   This_Key_Info.LPMS_DocGen      := This_Key_Priv.LPMS_DocGen;
+   This_Key_Info.LPMS_Floating    := This_Key_Priv.LPMS_Floating;
+   This_Key_Info.LPMS_Options4     := This_Key_Priv.LPMS_Options4;
+   This_Key_Info.License          := This_Key_Priv.License;
+
+   if DoEncode(This_Key_Info) = True then begin
+
+      NewKey := This_Key_Info.Unique;
+
+//--- Update the database with the new key
+
+      S4 := 'UPDATE users SET LPMSKey_Renewals = ' + IntToStr(++UserRenewals) +
+            S2 + ', LPMSKey_Activation = ''' + This_Key_Info.Unique +
+            ''', LPMSKey_ModBy = ''LPMS Server'', LPMSKey_ModOn = ''' +
+            FormatDateTime('yyyy/MM/dd',Now()) + ''', LPMSKey_ModAt = ''' +
+            FormatDateTime('HH:nn:ss',Now()) + ''' WHERE LPMSKey_Prefix = ''' +
+            ThisList.Strings[COMPCD] + S6;
+
+      try
+
+         SQLQry1.Close();
+         SQLQry1.SQL.Text := S4;
+         SQLQry1.ExecSQL();
+
+         Except on Err : Exception do begin
+
+            NewKey := 'INVALID KEY';
+            LastMsg := '      **Unexpected error: ''' + Err.Message + ''' - Unable to update Data Base';
+            DispLogMsg(ThreadNum + ' ' + LastMsg);
+            FLPMS_Main.Cursor := crDefault;
+            DoXfer := false;
+            Exit;
+
+         end;
+
+      end;
+
+      NewKey := This_Key_Info.Unique;
+      NewPrefix := UserNewPrefix;
+
+      FLPMS_Main.Cursor := crDefault;
+
+      Result := True;
+
+   end else begin
+
+      NewKey := 'INVALID KEY';
+      LastMsg := '      **Unexpected error - Unable to generate new key';
+      DispLogMsg(ThreadNum + ' ' + LastMsg);
+      FLPMS_Main.Cursor := crDefault;
+      DoXfer := false;
+      Exit;
+
+   end;
+
+end;
+//---------------------------------------------------------------------------
 // Display a message in the Log listview
 //---------------------------------------------------------------------------
 procedure TFLPMS_Main.DispLogMsg(ThisMsg: string);
@@ -1625,7 +1979,7 @@ const
 
 var
    idx1, idx2, PThisChr, NThisChr, PhraseLen, ThisKeyLen : integer;
-   TempKey, NewKey, Encrypted                            : string;
+   TempKey, NewPhrase, Encrypted                         : string;
 
 begin
 
@@ -1647,14 +2001,14 @@ begin
 //--- Now extend or limit the Key to the same length as the Phrase
 
    idx2   := 1;
-   NewKey := '';
+   NewPhrase := '';
 
    for idx1 := 1 to PhraseLen do begin
 
       if idx2 > ThisKeyLen then
          idx2 := 1;
 
-      NewKey := NewKey + TempKey[idx2];
+      NewPhrase := NewPhrase + TempKey[idx2];
       Inc(idx2);
 
    end;
@@ -1671,7 +2025,7 @@ begin
          for idx1 := 1 to PhraseLen do begin
 
             PThisChr := Ord(Phrase[idx1]);
-            NThisChr := Ord(NewKey[idx1]);
+            NThisChr := Ord(NewPhrase[idx1]);
 
             if ((PThisChr >= OrdBigA) and (PThisChr <= OrdBigZ)) then
                Encrypted := Encrypted + Chr(((PThisChr + NThisChr) mod 26) + OrdBigA)
@@ -1689,7 +2043,7 @@ begin
          for idx1 := 1 to PhraseLen do begin
 
             PThisChr := Ord(Phrase[idx1]);
-            NThisChr := Ord(NewKey[idx1]);
+            NThisChr := Ord(NewPhrase[idx1]);
 
             if ((PThisChr >= OrdBigA) and (PThisChr <= OrdBigZ)) then
                Encrypted := Encrypted + Chr(((PThisChr - NThisChr + 26) mod 26) + OrdBigA)
