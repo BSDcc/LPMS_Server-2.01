@@ -259,8 +259,9 @@ private  { Private Declarations }
 
 {$ENDIF}
 
-//   function  GetUser(CurrentKey, CompanyCode, Unique1, Unique2, Unique3, Unique4, Unique5, Unique6 : string): boolean;
    function  GetUser(ThisList: TStringList): boolean;
+   function  GetRegistration(ThisUnique: string):boolean;
+   procedure RegisterUser(ThisList, ThisReply: TStringList);
    procedure DispLogMsg(ThisMsg: string);
    procedure DispLogMsg(ThisDate, ThisTime, ThisMsg: string);
    procedure OpenLog(FileName: string);
@@ -505,6 +506,10 @@ begin
 
 //--- Build the DB connection string
 
+   SQLCon.HostName     := ServerHost;
+   SQLCon.UserName     := 'LPMSAdmin';
+   SQLCon.Password     := 'LA01';
+   SQLCon.DatabaseName := 'lpmsdefault';
    SQLTran.DataBase    := SQLCon;
    SQLQry1.Transaction := SQLTran;
 
@@ -991,8 +996,11 @@ const
 
 var
    idx1                               : integer;
+   ThisSize                           : double;
+   Found                              : boolean;
    Request, CodedReq, ThisMsg, Delim  : string;
    ThisList, ThisReply                : TStringList;
+   This_Key_Priv                      : REC_Key_Priv;
 
 begin
 
@@ -1005,6 +1013,7 @@ begin
       Request := Vignere(CYPHER_DEC,CodedReq,SecretPhrase);
 
       case StrToInt(Request.SubString(0,1)) of
+
          SERVER_REQKEY: begin
 
 //--- Display the information we received
@@ -1031,7 +1040,6 @@ begin
 
 //--- Process the request
 
-//            if GetUser(ThisList.Strings[1],ThisList.Strings[2],ThisList.Strings[3],ThisList.Strings[4],ThisList.Strings[5],ThisList.Strings[6],ThisList.Strings[7],ThisList.Strings[8]) = True then begin
             if GetUser(ThisList) = True then begin
 
                ThisReply := TStringList.Create;
@@ -1081,327 +1089,243 @@ begin
 
          end;
 
-      end;
+         SERVER_REQMSG: begin
 
-   end;
-
-{
-  int            idx1, ThisSize;
-  bool           KeyValid;
-  AnsiString     CodedReq, Request, ThisMsg;
-  TStringList   *ThisList, *ThisReply;
-  LPMS_Key_Priv *This_Key_Priv;
-
-  Request = AContext->Connection->IOHandler->ReadLn();
-
-  if (Request == "LPMS Server Request")
-  {
-     AContext->Connection->IOHandler->WriteLn("LPMS Server Ready");
-     CodedReq = AContext->Connection->IOHandler->ReadLn();
-     Request = Vignere(CYPHER_DEC,CodedReq.c_str(),SecretPhrase.c_str());
-
-     switch (StrToInt(Request.SubString(1,1)))
-     {
-        case SERVER_REQKEY:
 //--- Display the information we received
 
-           ThisList = Disassemble(Request.c_str(),TYPE_PLAIN);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Received request for a key update:");
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Current key: " + ThisList->Strings[1]);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Company code: " + ThisList->Strings[2]);
+            ThisList := Disassemble(Request,TYPE_PLAIN);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Received request to look for updates and or general information:');
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Current version: ' + edtVersion.Text);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       User''s version: ' + ThisList.Strings[1]);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       User''s Key: ' + ThisList.Strings[2]);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Company code: ' + ThisList.Strings[3]);
 
-           ThisMsg   = "";
-           for (idx1 = 0; idx1 < 6; idx1++)
-           {
-              if (ThisList->Strings[idx1 + 3] == "")
-                 break;
+            ThisMsg := '';
+            Delim   := '';
 
-              ThisMsg += ThisList->Strings[idx1 + 3] + ", ";
-           }
+//--- Extract the MAC Addresses
 
-           ThisMsg.SetLength(ThisMsg.Length() - 2);
+            for idx1 := 4 to ThisList.Count - 1 do begin
 
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Unique Identifier(s): " + ThisMsg.UpperCase());
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Checking user record for '" + ThisList->Strings[2] + "':");
+               ThisMsg := ThisMsg + Delim + ThisList.Strings[idx1];
+               Delim := ', ';
 
-//--- Process the request
+            end;
 
-           if (GetUser(ThisList->Strings[1],ThisList->Strings[2],ThisList->Strings[3],ThisList->Strings[4],ThisList->Strings[5],ThisList->Strings[6],ThisList->Strings[7],ThisList->Strings[8]) == true)
-           {
-              ThisReply = new TStringList;
-
-              ThisReply->Add(IntToStr(REPLY_SUCCESS));
-              ThisReply->Add("Unlock Key successfully generated and updated");
-              ThisReply->Add(IntToStr(ACTION_UPDATEREG));
-              ThisReply->Add("Key");
-              ThisReply->Add(NewKey);
-              ThisReply->Add(IntToStr(ACTION_DISPMSG));
-              ThisReply->Add("New Unlock Key is '" + NewKey + "'");
-              if (DoXfer == true)
-              {
-                 ThisReply->Add(IntToStr(ACTION_DOXFER));
-                 ThisReply->Add(NewPrefix);
-                 ThisReply->Add(IntToStr(ACTION_DISPMSG));
-                 ThisReply->Add("Registration transferred to '" + NewPrefix + "' - Please restart LPMS");
-              }
-              AContext->Connection->IOHandler->WriteLn(Assemble(ThisReply,TYPE_CODED));
-
-              delete ThisReply;
-           }
-           else
-           {
-              ThisReply = new TStringList;
-
-              ThisReply->Add(IntToStr(REPLY_FAIL));
-              ThisReply->Add("Invalid Request");
-              ThisReply->Add(IntToStr(ACTION_DISPMSG));
-              ThisReply->Add(LastMsg + " - Please contact BlueCrane Software Development by sending an email to " + ThisEmail + " describing the events that lead up to this message");
-              AContext->Connection->IOHandler->WriteLn(Assemble(ThisReply,TYPE_CODED));
-
-              delete ThisReply;
-           }
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Key update request completed");
-           break;
-
-        case SERVER_REQMSG:
-//--- Display the information we received
-
-           ThisList = Disassemble(Request.c_str(),TYPE_PLAIN);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Received request to look for updates and or general information:'");
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Current version: " + edtVersion->Text);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       User's version: " + ThisList->Strings[1]);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       User's Key: " + ThisList->Strings[2]);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Company code: " + ThisList->Strings[3]);
-
-           ThisMsg   = "";
-           for (idx1 = 0; idx1 < 6; idx1++)
-           {
-              if (ThisList->Strings[idx1 + 4] == "")
-                 break;
-
-              ThisMsg += ThisList->Strings[idx1 + 4] + ", ";
-           }
-
-           ThisMsg.SetLength(ThisMsg.Length() - 2);
-
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Unique Identifier(s): " + ThisMsg.UpperCase());
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Checking user record for '" + ThisList->Strings[2] + "':");
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Unique Identifier(s): ' + ToUpper(ThisMsg));
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Checking user record for ''' + ThisList.Strings[2] + ''':');
 
 //--- Check whether the Key is valid
 
-           This_Key_Priv = new LPMS_Key_Priv;
+            This_Key_Priv.Key := ThisList.Strings[2];
+            This_Key_Priv.DaysLeft := 0;
 
-           This_Key_Priv->Key = ThisList->Strings[2];
-           This_Key_Priv->DaysLeft = 0;
-
-           DldDecode->LPMS_Key_Decode(This_Key_Priv);
+            DoDecode(This_Key_Priv);
 
 //--- Check for a match in the Mac Addresses
 
-           KeyValid = false;
+            Found := False;
 
-           if (This_Key_Priv->Unique == ThisList->Strings[4])
-              KeyValid = true;
-           else if (This_Key_Priv->Unique == ThisList->Strings[5])
-              KeyValid = true;
-           else if (This_Key_Priv->Unique == ThisList->Strings[6])
-              KeyValid = true;
-           else if (This_Key_Priv->Unique == ThisList->Strings[7])
-              KeyValid = true;
-           else if (This_Key_Priv->Unique == ThisList->Strings[8])
-              KeyValid = true;
-           else if (This_Key_Priv->Unique == ThisList->Strings[9])
-              KeyValid = true;
+            for idx1 := 4 to ThisList.Count - 1 do begin
 
-           ThisReply = new TStringList;
+               if This_Key_Priv.Unique = ThisList.Strings[idx1] then
+                  Found := True;
 
-           if ((KeyValid == true) && (This_Key_Priv->DaysLeft > 0))
-           {
+            end;
+
+            ThisReply := TStringList.Create;
+
+            if ((Found = True) and (This_Key_Priv.DaysLeft > 0)) then begin
+
+
 //--- Process the request
 
-              ThisReply->Add(IntToStr(REPLY_SUCCESS));
+               ThisReply.Add(IntToStr(REPLY_SUCCESS));
 
-              if (chkActivate->Checked == false && chkDownload->Checked == false)
-              {
-                    ThisReply->Add("Check completed");
-                    ThisReply->Add(IntToStr(ACTION_DISPMSG));
-                    ThisReply->Add("No new messages or updates");
-              }
+               if ((chkActivate.Checked = False) and (chkDownload.Checked = False)) then begin
 
-              if (chkActivate->Checked == true)
-              {
-                 ThisReply->Add("Check completed");
-                 ThisReply->Add(IntToStr(ACTION_DISPMSG));
-                 ThisReply->Add(edtSpecialMsg->Text);
-              }
-              else if (chkDownload->Checked == true)
-              {
-                 if ((edtVersion->Text > ThisList->Strings[1]) || (chkOverride->Checked == true))
-                 {
-                    ThisSize = ((speSize->Value / 32768) + 1);
+                  ThisReply.Add('Check completed');
+                  ThisReply.Add(IntToStr(ACTION_DISPMSG));
+                  ThisReply.Add('No new messages or updates');
 
-                    ThisReply->Add("A new version of LPMS (" + edtVersion->Text + ") is available for download");
-                    ThisReply->Add(IntToStr(ACTION_DISPMSG));
-                    ThisReply->Add("To download the new version click on the 'Download' button");
-                    ThisReply->Add(IntToStr(ACTION_DOWNLOAD));
-                    ThisReply->Add(IntToStr(cbType->ItemIndex));
-                    ThisReply->Add(IntToStr(ThisSize));
-                    ThisReply->Add(edtHostname->Text);
-                    ThisReply->Add(edtUserID->Text);
-                    ThisReply->Add(edtPassword->Text);
-                    ThisReply->Add(edtDestFile->Text);
-                    ThisReply->Add(edtSourceFile->Text);
-                    ThisReply->Add(cbxLegend->Text);
-                    ThisReply->Add(IntToStr(ACTION_OPEN));
-                    ThisReply->Add("1");
-                 }
-                 else
-                {
-                    ThisReply->Add("Current version of LPMS is '" + edtVersion->Text + "'");
-                    ThisReply->Add(IntToStr(ACTION_DISPMSG));
-                    ThisReply->Add("Your version of LPMS (" + ThisList->Strings[1] + ") is the latest version");
-                }
-              }
+               end;
 
-              AContext->Connection->IOHandler->WriteLn(Assemble(ThisReply,TYPE_CODED));
-              DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Request to look for updates and or general information completed");
-           }
-           else
-           {
-              ThisReply->Add(IntToStr(REPLY_FAIL));
-              ThisReply->Add("Invalid Request");
-              ThisReply->Add(IntToStr(ACTION_DISPMSG));
-              ThisReply->Add("Invalid Request - Please contact BlueCrane Software Development by sending an email to " + ThisEmail + " describing the events that lead up to this message");
-              AContext->Connection->IOHandler->WriteLn(Assemble(ThisReply,TYPE_CODED));
-           }
+               if chkActivate.Checked = True then begin
 
-           delete ThisReply;
-           break;
+                  ThisReply.Add('Check completed');
+                  ThisReply.Add(IntToStr(ACTION_DISPMSG));
+                  ThisReply.Add(edtSpecialMsg.Text);
 
-        case SERVER_REQFEES:
+               end else if chkDownload.Checked = True then begin
+
+                  if ((edtVersion.Text > ThisList.Strings[1]) or (chkOverride.Checked = True)) then begin
+
+                     ThisSize := ((speSize.Value) / 32768) + 1;
+
+                     ThisReply.Add('A new version of LPMS (' + edtVersion.Text + ') is available for download');
+                     ThisReply.Add(IntToStr(ACTION_DISPMSG));
+                     ThisReply.Add('To download the new version click on the ''Download'' button');
+                     ThisReply.Add(IntToStr(ACTION_DOWNLOAD));
+                     ThisReply.Add(IntToStr(cbType.ItemIndex));
+                     ThisReply.Add(FloatToStr(ThisSize));
+                     ThisReply.Add(edtHostname.Text);
+                     ThisReply.Add(edtUserID.Text);
+                     ThisReply.Add(edtPassword.Text);
+                     ThisReply.Add(edtDestFile.Text);
+                     ThisReply.Add(edtSourceFile.Text);
+                     ThisReply.Add(cbxLegend.Text);
+                     ThisReply.Add(IntToStr(ACTION_OPEN));
+                     ThisReply.Add('1');
+
+                  end else begin
+
+                     ThisReply.Add('Current version of LPMS is ''' + edtVersion.Text + '''');
+                     ThisReply.Add(IntToStr(ACTION_DISPMSG));
+                     ThisReply.Add('Your version of LPMS (' + ThisList.Strings[1] + ') is the latest version');
+
+                  end;
+
+               end;
+
+               AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+               DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Request to look for updates and or general information completed');
+
+            end else begin
+
+               ThisReply.Add(IntToStr(REPLY_FAIL));
+               ThisReply.Add('Invalid Request');
+               ThisReply.Add(IntToStr(ACTION_DISPMSG));
+               ThisReply.Add('Invalid Request - Please contact BlueCrane Software Development by sending an email to ' + ThisEmail + ' describing the events that lead up to this message');
+               AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+
+            end;
+
+            ThisReply.Destroy;
+
+         end;
+
+         SERVER_REQFEES: begin
+
 //--- Display the information we received
 
-           ThisList = Disassemble(Request.c_str(),TYPE_PLAIN);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Received request to look for an updated Party-and-Party Fees schedule");
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       User's Key: " + ThisList->Strings[1]);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Company code: " + ThisList->Strings[2]);
+            ThisList := Disassemble(Request,TYPE_PLAIN);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Received request to look for an updated Party-and-Party Fees schedule');
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       User''s Key: ' + ThisList.Strings[1]);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Company code: ' + ThisList.Strings[2]);
 
-           ThisMsg   = "";
-           for (idx1 = 0; idx1 < 6; idx1++)
-           {
-              if (ThisList->Strings[idx1 + 3] == "")
-                 break;
+            ThisMsg := '';
+            Delim   := '';
 
-              ThisMsg += ThisList->Strings[idx1 + 3] + ", ";
-           }
+//--- Extract the MAC Addresses
 
-           ThisMsg.SetLength(ThisMsg.Length() - 2);
+            for idx1 := 3 to ThisList.Count - 1 do begin
 
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Unique Identifier(s): " + ThisMsg.UpperCase());
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Checking user record for '" + ThisList->Strings[1] + "':");
+               ThisMsg := ThisMsg + Delim + ThisList.Strings[idx1];
+               Delim := ', ';
+
+            end;
+
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Unique Identifier(s): ' + ToUpper(ThisMsg));
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Checking user record for ''' + ThisList.Strings[1] + ''':');
 
 //--- Check whether the Key is valid
 
-           This_Key_Priv = new LPMS_Key_Priv;
+            This_Key_Priv.Key := ThisList.Strings[1];
+            This_Key_Priv.DaysLeft := 0;
 
-           This_Key_Priv->Key = ThisList->Strings[1];
-           This_Key_Priv->DaysLeft = 0;
-
-           DldDecode->LPMS_Key_Decode(This_Key_Priv);
+            DoDecode(This_Key_Priv);
 
 //--- Check for a match in the Mac Addresses
 
-           KeyValid = false;
+            Found := False;
 
-           if (This_Key_Priv->Unique == ThisList->Strings[3])
-              KeyValid = true;
-           else if (This_Key_Priv->Unique == ThisList->Strings[4])
-              KeyValid = true;
-           else if (This_Key_Priv->Unique == ThisList->Strings[5])
-              KeyValid = true;
-           else if (This_Key_Priv->Unique == ThisList->Strings[6])
-              KeyValid = true;
-           else if (This_Key_Priv->Unique == ThisList->Strings[7])
-              KeyValid = true;
-           else if (This_Key_Priv->Unique == ThisList->Strings[8])
-              KeyValid = true;
+            for idx1 := 3 to ThisList.Count - 1 do begin
 
-           ThisReply = new TStringList;
+               if This_Key_Priv.Unique = ThisList.Strings[idx1] then
+                  Found := True;
 
-           if ((KeyValid == true) && (This_Key_Priv->DaysLeft > 0))
-           {
+            end;
+
+            ThisReply := TStringList.Create;
+
+            if ((Found = True) and (This_Key_Priv.DaysLeft > 0)) then begin
+
+
 //--- Process the request
 
-              ThisReply->Add(IntToStr(REPLY_SUCCESS));
+               ThisReply.Add(IntToStr(REPLY_SUCCESS));
 
-              AContext->Connection->IOHandler->WriteLn(Assemble(ThisReply,TYPE_CODED));
-              DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Request to look for an updated Party-and-Party Fees schedule completed");
-           }
+               AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+               DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Request to look for an updated Party-and-Party Fees schedule completed');
 
-           delete ThisReply;
-           break;
+            end;
 
-        case SERVER_REQREGISTER:
+            ThisReply.Destroy;
+
+         end;
+
+         SERVER_REQREGISTER: begin
+
 //--- Display the information we received
 
-           ThisList = Disassemble(Request.c_str(),TYPE_PLAIN);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Received request to register a new user");
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       User's Name: " + ThisList->Strings[1]);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       User's Email Address: " + ThisList->Strings[2]);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       User's Contact Number: " + ThisList->Strings[3]);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       User's Company: " + ThisList->Strings[4]);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Unique Identifier: " + ThisList->Strings[5]);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "       Database Prefix: " + ThisList->Strings[6]);
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Checking previous registrations for '" + ThisList->Strings[5] + "':");
+            ThisList := Disassemble(Request,TYPE_PLAIN);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Received request to register a new user');
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       User''s Name: ' + ThisList.Strings[1]);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       User''s Email Address: ' + ThisList.Strings[2]);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       User''s Contact Number: ' + ThisList.Strings[3]);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       User''s Company: ' + ThisList.Strings[4]);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Unique Identifier: ' + ThisList.Strings[5]);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Database Prefix: ' + ThisList.Strings[6]);
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Checking previous registrations for ''' + ThisList.Strings[5] + ''':');
 
 //--- Check whether this unique identifier has been registered before
 
-           ThisReply = new TStringList;
+            ThisReply := TStringList.Create;
 
-           if (GetRegistration(ThisList->Strings[5]) == true)
-           {
-              RegisterUser(ThisList, ThisReply);
-           }
-           else
-           {
-              ThisReply->Add(IntToStr(REPLY_FAIL));
-              ThisReply->Add(IntToStr(ACTION_DISPMSG));
-              ThisReply->Add("Invalid Registration Request (Already registered) - Please contact BlueCrane Software Development by sending an email to " + ThisEmail + " describing the events that lead up to this message");
-              AContext->Connection->IOHandler->WriteLn(Assemble(ThisReply,TYPE_CODED));
-           }
+            if (GetRegistration(ThisList.Strings[5]) = True) then
+               RegisterUser(ThisList, ThisReply)
+            else begin
+
+               ThisReply.Add(IntToStr(REPLY_FAIL));
+               ThisReply.Add(IntToStr(ACTION_DISPMSG));
+               ThisReply.Add('Invalid Registration Request (Already registered) - Please contact BlueCrane Software Development by sending an email to ' + ThisEmail + ' describing the events that lead up to this message');
+               AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+
+            end;
 
 //--- Process the request
 
-           AContext->Connection->IOHandler->WriteLn(Assemble(ThisReply,TYPE_CODED));
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Request for registration completed");
+            AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Request for registration completed');
 
-           delete ThisReply;
-           break;
+            ThisReply.Destroy;
 
-        default:
-           AContext->Connection->Disconnect();
-           DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Invalid request: '" + Request + "', connection terminated");
-           break;
-     }
+         end else begin
 
-     DispLogMsg(AnsiString(AContext->Binding()->Handle) + " Connection Request completed");
-     AContext->Connection->Disconnect();
-     return;
-  }
-  else
-  {
-     AContext->Connection->Disconnect();
-     DispLogMsg(AnsiString(AContext->Binding()->Handle) + "    Invalid request: '" + Request + "', connection terminated");
-     return;
-  }
-}
+            AContext.Connection.Disconnect();
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Invalid request: ''' + Request + ''', connection terminated');
+
+         end;
+
+      end;
+
+      AContext.Connection.Disconnect();
+      DispLogMsg(IntToStr(AContext.Binding.Handle) + ' Connection Request completed');
+      Exit;
+
+   end else begin
+
+      AContext.Connection.Disconnect();
+      DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Invalid request: '' + Request + '', connection terminated');
+      Exit;
+
+   end;
 
 end;
 
 //---------------------------------------------------------------------------
 // Function to retrieve the requesting user's information from the Database
 //---------------------------------------------------------------------------
-//function TFLPMS_Main.GetUser(CurrentKey, CompanyCode, Unique1, Unique2, Unique3, Unique4, Unique5, Unique6: string): boolean;
 function TFLPMS_Main.GetUser(ThisList: TStringList): boolean;
 const
    CURKEY           = 1;
@@ -1440,7 +1364,7 @@ begin
         ThisList.Strings[COMPCD] + '''';
 
    FLPMS_Main.Cursor := crHourGlass;
-   DoXfer := false;
+   DoXfer := False;
    S2 := '';
 
 //--- Get the user related information
@@ -1605,7 +1529,7 @@ begin
 
    if UserXfer = 1 then begin
 
-      DoXfer := true;
+      DoXfer := True;
       This_Key_Priv.DBPrefix := UserNewPrefix;
       This_Key_Priv.License  := UserNewLicense;
 
@@ -1649,7 +1573,7 @@ begin
             LastMsg := '      **Unexpected error: ''' + Err.Message + ''' - Unable to update Data Base';
             DispLogMsg(ThreadNum + ' ' + LastMsg);
             FLPMS_Main.Cursor := crDefault;
-            DoXfer := false;
+            DoXfer := False;
             Exit;
 
          end;
@@ -1669,12 +1593,29 @@ begin
       LastMsg := '      **Unexpected error - Unable to generate new key';
       DispLogMsg(ThreadNum + ' ' + LastMsg);
       FLPMS_Main.Cursor := crDefault;
-      DoXfer := false;
+      DoXfer := False;
       Exit;
 
    end;
 
 end;
+
+//---------------------------------------------------------------------------
+// Function to check whether an evaluation user has been registered before
+//---------------------------------------------------------------------------
+function TFLPMS_Main.GetRegistration(ThisUnique: string):boolean;
+begin
+   Result := True;
+end;
+
+//---------------------------------------------------------------------------
+// Procedure to register a new evaluation user
+//---------------------------------------------------------------------------
+procedure TFLPMS_Main.RegisterUser(ThisList, ThisReply: TStringList);
+begin
+   //
+end;
+
 //---------------------------------------------------------------------------
 // Display a message in the Log listview
 //---------------------------------------------------------------------------

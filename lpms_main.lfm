@@ -11,7 +11,7 @@ object FLPMS_Main: TFLPMS_Main
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  LCLVersion = '2.0.8.0'
+  LCLVersion = '2.0.6.0'
   object Bevel1: TBevel
     Left = 0
     Height = 2
@@ -122,7 +122,7 @@ object FLPMS_Main: TFLPMS_Main
       TabOrder = 0
       object Label2: TLabel
         Left = 12
-        Height = 17
+        Height = 15
         Top = 12
         Width = 63
         Caption = 'Text to Find'
@@ -200,7 +200,7 @@ object FLPMS_Main: TFLPMS_Main
       end
       object edtFind: TEdit
         Left = 89
-        Height = 27
+        Height = 26
         Top = 8
         Width = 708
         Anchors = [akTop, akLeft, akRight]
@@ -294,7 +294,7 @@ object FLPMS_Main: TFLPMS_Main
     TabOrder = 2
     object Label14: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 12
       Width = 66
       Caption = 'Server Port:'
@@ -302,7 +302,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label15: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 42
       Width = 69
       Caption = 'Server Host:'
@@ -310,7 +310,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Lable7: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 72
       Width = 45
       Caption = 'Log File:'
@@ -318,7 +318,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label16: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 132
       Width = 82
       Caption = 'Latest Version:'
@@ -326,7 +326,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label17: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 162
       Width = 97
       Caption = 'Special Message:'
@@ -348,15 +348,15 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label18: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 222
-      Width = 89
+      Width = 88
       Caption = 'Download Type:'
       ParentColor = False
     end
     object Label19: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 252
       Width = 85
       Caption = 'Download Size:'
@@ -364,7 +364,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label20: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 282
       Width = 66
       Caption = 'Host Name:'
@@ -372,7 +372,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label21: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 312
       Width = 46
       Caption = 'User ID:'
@@ -380,7 +380,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label22: TLabel
       Left = 268
-      Height = 17
+      Height = 15
       Top = 312
       Width = 57
       Caption = 'Password:'
@@ -388,7 +388,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label23: TLabel
       Left = 268
-      Height = 17
+      Height = 15
       Top = 252
       Width = 84
       Caption = 'Button Legend:'
@@ -396,7 +396,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label24: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 342
       Width = 64
       Caption = 'Source File:'
@@ -404,7 +404,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label25: TLabel
       Left = 12
-      Height = 17
+      Height = 15
       Top = 372
       Width = 89
       Caption = 'Destination File:'
@@ -419,8 +419,8 @@ object FLPMS_Main: TFLPMS_Main
     end
     object lblStateP: TLabel
       Left = 12
-      Height = 17
-      Top = 430
+      Height = 15
+      Top = 432
       Width = 49
       Anchors = [akLeft, akBottom]
       Caption = 'lblStateP'
@@ -466,7 +466,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtHost: TEdit
       Left = 120
-      Height = 27
+      Height = 26
       Top = 38
       Width = 738
       Anchors = [akTop, akLeft, akRight]
@@ -475,7 +475,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtVersion: TEdit
       Left = 120
-      Height = 27
+      Height = 26
       Top = 128
       Width = 121
       OnChange = edtHostChange
@@ -483,7 +483,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtSpecialMsg: TEdit
       Left = 120
-      Height = 27
+      Height = 26
       Top = 158
       Width = 739
       Anchors = [akTop, akLeft, akRight]
@@ -510,7 +510,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtHostname: TEdit
       Left = 120
-      Height = 27
+      Height = 26
       Top = 278
       Width = 738
       Anchors = [akTop, akLeft, akRight]
@@ -519,7 +519,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtUserID: TEdit
       Left = 120
-      Height = 27
+      Height = 26
       Top = 308
       Width = 121
       OnChange = edtHostChange
@@ -527,7 +527,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtPassword: TEdit
       Left = 376
-      Height = 27
+      Height = 26
       Top = 308
       Width = 121
       EchoMode = emPassword
@@ -537,7 +537,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtSourceFile: TEdit
       Left = 120
-      Height = 27
+      Height = 26
       Top = 338
       Width = 738
       Anchors = [akTop, akLeft, akRight]
@@ -546,7 +546,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtDestFile: TEdit
       Left = 120
-      Height = 27
+      Height = 26
       Top = 368
       Width = 738
       Anchors = [akTop, akLeft, akRight]
@@ -564,7 +564,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object cbType: TComboBox
       Left = 120
-      Height = 27
+      Height = 26
       Top = 218
       Width = 121
       ItemHeight = 0
@@ -628,7 +628,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object cbxLegend: TComboBox
       Left = 376
-      Height = 27
+      Height = 26
       Top = 248
       Width = 121
       ItemHeight = 0
@@ -644,7 +644,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object spePort: TSpinEdit
       Left = 120
-      Height = 27
+      Height = 26
       Top = 8
       Width = 60
       MaxValue = 0
@@ -654,7 +654,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object speSize: TSpinEdit
       Left = 120
-      Height = 27
+      Height = 26
       Top = 248
       Width = 90
       MaxValue = 0
@@ -663,7 +663,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtLogFile: TFileNameEdit
       Left = 120
-      Height = 27
+      Height = 26
       Top = 68
       Width = 738
       FilterIndex = 0
