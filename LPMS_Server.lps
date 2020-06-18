@@ -3,13 +3,14 @@
   <ProjectSession>
     <Version Value="11"/>
     <BuildModes Active="Debug"/>
-    <Units Count="12">
+    <Units Count="15">
       <Unit0>
         <Filename Value="LPMS_Server.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="11" Y="11"/>
-        <UsageCount Value="148"/>
+        <EditorIndex Value="5"/>
+        <CursorPos Y="19"/>
+        <UsageCount Value="151"/>
+        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="lpms_main.pas"/>
@@ -19,13 +20,13 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="1459"/>
-        <CursorPos X="3" Y="1470"/>
-        <FoldState Value=" T3pH0}91 pignD0t4 pjDl70W8]IXkU064"/>
-        <UsageCount Value="148"/>
+        <TopLine Value="1384"/>
+        <CursorPos Y="1411"/>
+        <FoldState Value=" TLnV043 T3rW0}91 pignD0t4 pjDl70W8]IXkU06011!"/>
+        <UsageCount Value="151"/>
         <Bookmarks Count="2">
-          <Item0 Y="1329"/>
-          <Item1 X="4" Y="265" ID="1"/>
+          <Item0 X="4" Y="374" ID="1"/>
+          <Item1 X="35" Y="397"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -33,11 +34,10 @@
       <Unit2>
         <Filename Value="../LPMS_ACM-2.01/lpms_main.pas"/>
         <UnitName Value="LPMS_Main"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="2583"/>
         <CursorPos Y="2632"/>
         <UsageCount Value="16"/>
-        <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="../LPMS_Backup_Manager-3.02.git/ldbackupapp.pas"/>
@@ -63,9 +63,10 @@
       </Unit4>
       <Unit5>
         <Filename Value="../BSD_Utilities/BSD_Utilities.lpr"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="199"/>
-        <UsageCount Value="9"/>
+        <EditorIndex Value="6"/>
+        <CursorPos Y="60"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="../../.lpms_server/LPMS_Server.ini"/>
@@ -104,132 +105,159 @@
         <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdCustomTCPServer.pas"/>
         <EditorIndex Value="1"/>
         <TopLine Value="539"/>
-        <CursorPos Y="555"/>
+        <CursorPos Y="562"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdContext.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="161"/>
+        <CursorPos Y="189"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdTask.pas"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="88"/>
+        <CursorPos Y="137"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdThread.pas"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="439"/>
+        <CursorPos Y="476"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit14>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1392" TopLine="1373"/>
+        <Caret Line="1232" TopLine="1185"/>
       </Position1>
       <Position2>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1393" TopLine="1373"/>
+        <Caret Line="1240" TopLine="1213"/>
       </Position2>
       <Position3>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1394" TopLine="1373"/>
+        <Caret Line="1242" TopLine="1213"/>
       </Position3>
       <Position4>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1395" TopLine="1373"/>
+        <Caret Line="1243" TopLine="1213"/>
       </Position4>
       <Position5>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1396" TopLine="1373"/>
+        <Caret Line="1244" TopLine="1213"/>
       </Position5>
       <Position6>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1397" TopLine="1373"/>
+        <Caret Line="1277" TopLine="1250"/>
       </Position6>
       <Position7>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1398" TopLine="1373"/>
+        <Caret Line="1411" TopLine="1385"/>
       </Position7>
       <Position8>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1411" TopLine="1395"/>
+        <Caret Line="1183" TopLine="1156"/>
       </Position8>
       <Position9>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1413" TopLine="1395"/>
+        <Caret Line="1411" TopLine="1384"/>
       </Position9>
       <Position10>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1414" TopLine="1395"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdCustomTCPServer.pas"/>
+        <Caret Line="555" TopLine="539"/>
       </Position10>
       <Position11>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1415" TopLine="1395"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdCustomTCPServer.pas"/>
+        <Caret Line="556" TopLine="539"/>
       </Position11>
       <Position12>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1428" TopLine="1412"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdCustomTCPServer.pas"/>
+        <Caret Line="557" TopLine="539"/>
       </Position12>
       <Position13>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1430" TopLine="1412"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdCustomTCPServer.pas"/>
+        <Caret Line="558" TopLine="539"/>
       </Position13>
       <Position14>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1432" TopLine="1412"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdCustomTCPServer.pas"/>
+        <Caret Line="559" TopLine="539"/>
       </Position14>
       <Position15>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1445" TopLine="1429"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdCustomTCPServer.pas"/>
+        <Caret Line="562" TopLine="539"/>
       </Position15>
       <Position16>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1465" TopLine="1449"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdContext.pas"/>
+        <Caret Line="189" TopLine="161"/>
       </Position16>
       <Position17>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1466" TopLine="1449"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdTask.pas"/>
+        <Caret Line="137" TopLine="88"/>
       </Position17>
       <Position18>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1470" TopLine="1449"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdThread.pas"/>
+        <Caret Line="744" TopLine="716"/>
       </Position18>
       <Position19>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1472" TopLine="1449"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdThread.pas"/>
+        <Caret Line="746" TopLine="716"/>
       </Position19>
       <Position20>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1474" TopLine="1449"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdThread.pas"/>
+        <Caret Line="430" TopLine="403"/>
       </Position20>
       <Position21>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1475" TopLine="1449"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdThread.pas"/>
+        <Caret Line="455" TopLine="408"/>
       </Position21>
       <Position22>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1476" TopLine="1450"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdThread.pas"/>
+        <Caret Line="462" TopLine="415"/>
       </Position22>
       <Position23>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1477" TopLine="1451"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdThread.pas"/>
+        <Caret Line="403" TopLine="375"/>
       </Position23>
       <Position24>
-        <Filename Value="lpms_main.pas"/>
-        <Caret Line="1478" TopLine="1452"/>
+        <Filename Value="../../.lazarus/onlinepackagemanager/packages/Indy10/Core/IdThread.pas"/>
+        <Caret Line="466" TopLine="439"/>
       </Position24>
       <Position25>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1479" TopLine="1453"/>
+        <Caret Line="1083" TopLine="1019"/>
       </Position25>
       <Position26>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1480" TopLine="1454"/>
+        <Caret Line="1183" TopLine="1129"/>
       </Position26>
       <Position27>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1481" TopLine="1455"/>
+        <Caret Line="1411" TopLine="1384"/>
       </Position27>
       <Position28>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1482" TopLine="1456"/>
+        <Caret Line="1183" TopLine="1156"/>
       </Position28>
       <Position29>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1603" TopLine="1587"/>
+        <Caret Line="1411" TopLine="1384"/>
       </Position29>
       <Position30>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1070" TopLine="1054"/>
+        <Caret Line="1183" TopLine="1156"/>
       </Position30>
     </JumpHistory>
     <RunParams>
@@ -238,53 +266,18 @@
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="6">
+    <BreakPoints Count="1">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="lpms_main.pas"/>
-        <Line Value="1352"/>
+        <Line Value="1689"/>
       </Item1>
-      <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="lpms_main.pas"/>
-        <Line Value="1389"/>
-      </Item2>
-      <Item3>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="lpms_main.pas"/>
-        <Line Value="1043"/>
-      </Item3>
-      <Item4>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="lpms_main.pas"/>
-        <Line Value="1419"/>
-      </Item4>
-      <Item5>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="lpms_main.pas"/>
-        <Line Value="1428"/>
-      </Item5>
-      <Item6>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="lpms_main.pas"/>
-        <Line Value="1380"/>
-      </Item6>
     </BreakPoints>
     <Watches Count="1">
       <Item1>
-        <Expression Value="ThisMsg"/>
+        <Expression Value="S4"/>
       </Item1>
     </Watches>
   </Debugging>

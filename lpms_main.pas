@@ -23,7 +23,7 @@ uses
   Classes, SysUtils, sqldb, mssqlconn, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, StdCtrls, Buttons, ComCtrls, ActnList, Menus, Spin, EditBtn,
   IdTCPServer, LazFileUtils, usplashabout, IdContext, Process, StrUtils,
-  Character, Math, LCLType,
+  Character, Math, LCLType, DateUtils,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    Registry, mysql56conn;
@@ -176,6 +176,16 @@ type
 
 type
 
+   LIC_LICENSE  = (LIC_INVALID,          // Used as a place holder
+                   LIC_TRIAL,            // Generate a Trial License
+                   LIC_PERSONAL,         // Generate a normal production license
+                   LIC_BROWSE,           // Generate a Browse only license
+                   LIC_GENERIC);         // Generate a non Legal Firm license
+
+   RES_RESULTS  = (ERR_INVALID,          // The supplied license key is invalid
+                   ERR_LENGTH,           // The length of the supplied license key is wrong
+                   ERR_EXPIRED);         // The supplied license key has expired
+
    REC_LPMS_Pos = record
       Left   : integer;
       Top    : integer;
@@ -190,9 +200,98 @@ type
       Position : REC_LPMS_Pos;
    end;
 
+   REC_Key_Priv = record
+      Key              : string;
+      DaysLeft         : integer;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Options4    : boolean;
+      License          : integer;
+      DBPrefix         : string;
+      Unique           : string;
+      KeyDate          : string;
+   end;
+
+   REC_Key_Values = record
+      Unique           : string;
+      ExpDate          : string;
+      DBPrefix         : string;
+      LPMS_Collections : boolean;
+      LPMS_DocGen      : boolean;
+      LPMS_Floating    : boolean;
+      LPMS_Options4    : boolean;
+      License          : integer;
+   end;
+
+   REC_Key_Chars = record                // Overlay giving access to individual
+      ExpDateYL   : char;                // characters in the License Key
+      ExpDateYR   : char;
+      ExpDateM    : char;
+      ExpDateDL   : char;
+      ExpDateDR   : char;
+      DBPrefix01L : char;
+      DBPrefix02L : char;
+      DBPrefix03L : char;
+      Switch01    : char;
+      DBPrefix03R : char;
+      DBPrefix05  : char;
+      DBPrefix06  : char;
+      Unique01    : char;
+      Unique02    : char;
+      Unique03    : char;
+      Unique04    : char;
+      Unique05    : char;
+      Unique06    : char;
+      Unique07    : char;
+      Unique08    : char;
+      Unique09    : char;
+      Unique10    : char;
+      Unique11    : char;
+      Unique12    : char;
+      Range       : char;
+      CheckSum1   : char;
+      CheckSum2   : char;
+      DBPrefix01R : char;
+      DBPrefix02R : char;
+      Switch02    : char;
+      DBPrefix04  : char;
+   end;
+
+   REC_Key_Fields = record               // Overlay giving access to individual
+      ExpDate     : array[1..5] of char; // fields in the License Key
+      DBPrefix01L : char;
+      DBPrefix02L : char;
+      DBPrefix03L : char;
+      Switch01    : char;
+      DBPrefix03R : char;
+      DBPrefix05  : char;
+      DBPrefix06  : char;
+      Unique      : array[1..12] of char;
+      Range       : char;
+      CheckSum1   : char;
+      CheckSum2   : char;
+      DBPrefix02R : char;
+      Switch02    : char;
+      DBPrefix04  : char;
+   end;
+
+   REC_Key_String = record               // Overlay giving access to the License
+      Key : array[1..31] of char;        // Key as a whole string
+   end;
+
+   REC_Key_Overlay = record              // Defines the above three overlays to
+      case integer of                    // contain the same storage space
+         0: (Strings : REC_Key_String);
+         1: (Chars   : REC_Key_Chars);
+         2: (Fields  : REC_Key_Fields);
+   end;
+
+{
 {$IFDEF DARWIN}
 {$INCLUDE '../BSD_Utilities/BSD_Utilities_01.inc'}
 {$ENDIF}
+}
 
 private  { Private Declarations }
 
@@ -250,6 +349,15 @@ private  { Private Declarations }
    {$ENDIF}
 {$ENDIF}
 
+{$IFDEF DARWIN}                    // Target is macOS
+   {$IFDEF CPUI386}                // Running on old hardware i.e. i386 - Widget set must be Carbon
+      SQLCon : TMySQL55Connection;
+   {$ELSE}                         // Running on x86_64 - Widget set must be Cocoa
+      SQLCon : TMySQL57Connection;
+   {$ENDIF}
+{$ENDIF}
+
+{
 {$IFDEF DARWIN}
 
    This_Key_Values : REC_Key_Values;
@@ -258,6 +366,7 @@ private  { Private Declarations }
 {$INCLUDE '../BSD_Utilities/BSD_Utilities_02.inc'}
 
 {$ENDIF}
+}
 
    function  GetUser(ThisList: TStringList): boolean;
    function  GetRegistration(ThisUnique: string):boolean;
@@ -272,55 +381,44 @@ private  { Private Declarations }
    function  Disassemble(Str: string; ThisType: integer) : TStringList;
    function  Vignere(ThisType: integer; Phrase: string; const Key: string) : string;
    procedure Do_Layout(This_Form: string; ThisType: integer);
+   function  DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer;
+   function  DoEncode(var Encode_Key_Values: REC_Key_Values): boolean;
 
 public   { Public Declarations }
 
 end;
 
-{$IFNDEF DARWIN}
+//{$IFNDEF DARWIN}
 
 //------------------------------------------------------------------------------
 // Global variables
 //------------------------------------------------------------------------------
 const
-   TYPE_PLAIN   : integer = 1;
-   TYPE_CODED   : integer = 2;
-   BUFFERLEN    : integer = 1024;
-   CYPHER_ENC   : integer = 0;
-   CYPHER_DEC   : integer = 1;
-   TYPE_SAVE    : integer = 1;
-   TYPE_LOAD    : integer = 2;
-   SERVER_DELIM : char = '|';
-
-type
-
-   REC_Key_Priv = record
-      Key              : string;
-      DaysLeft         : integer;
-      LPMS_Collections : boolean;
-      LPMS_DocGen      : boolean;
-      LPMS_Floating    : boolean;
-      LPMS_Options4    : boolean;
-      License          : integer;
-      DBPrefix         : string;
-      Unique           : string;
-      KeyDate          : string;
-   end;
-
-   REC_Key_Values = record
-      Unique           : string;
-      ExpDate          : string;
-      DBPrefix         : string;
-      LPMS_Collections : boolean;
-      LPMS_DocGen      : boolean;
-      LPMS_Floating    : boolean;
-      LPMS_Options4    : boolean;
-      License          : integer;
-   end;
+   TYPE_PLAIN         = 1;
+   TYPE_CODED         = 2;
+   BUFFERLEN          = 1024;
+   TYPE_SAVE          = 1;
+   TYPE_LOAD          = 2;
+   CYPHER_ENC         = 0;
+   CYPHER_DEC         = 1;
+   SERVER_REQKEY      = 1;
+   SERVER_REQMSG      = 2;
+   SERVER_REQFEES     = 3;
+   SERVER_REQREGISTER = 4;
+   REPLY_SUCCESS      = 0;
+   REPLY_FAIL         = 1;
+   REPLY_NOUPDATE     = 2;
+   ACTION_UPDATEREG   = 1;
+   ACTION_DISPMSG     = 2;
+   ACTION_DOXFER      = 3;
+   ACTION_DOWNLOAD    = 4;
+   ACTION_OPEN        = 5;
+   SERVER_DELIM       = '|';
 
 var
    FLPMS_Main: TFLPMS_Main;
 
+{
 //--- Utilities contained in BSD_Utilities.dll
 
 {$IFDEF LINUX}
@@ -331,11 +429,13 @@ var
    function DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; cdecl; external 'BSD_Utilities';
    function DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; cdecl; external 'BSD_Utilities';
 {$ENDIF}
+}
 
 implementation
 
 {$R *.lfm}
 
+{
 {$ElSE}
 
 //------------------------------------------------------------------------------
@@ -353,6 +453,7 @@ implementation
 {$UNDEF LPMMS_Server_Main}
 
 {$ENDIF}
+}
 
 { TFLPMS_Main }
 
@@ -980,20 +1081,6 @@ end;
 // The TCP/IP Server received a message
 //---------------------------------------------------------------------------
 procedure TFLPMS_Main.tcpServerExecute(AContext: TIdContext);
-const
-   SERVER_REQKEY      = 1;
-   SERVER_REQMSG      = 2;
-   SERVER_REQFEES     = 3;
-   SERVER_REQREGISTER = 4;
-   REPLY_SUCCESS      = 0;
-   REPLY_FAIL         = 1;
-   REPLY_NOUPDATE     = 2;
-   ACTION_UPDATEREG   = 1;
-   ACTION_DISPMSG     = 2;
-   ACTION_DOXFER      = 3;
-   ACTION_DOWNLOAD    = 4;
-   ACTION_OPEN        = 5;
-
 var
    idx1                               : integer;
    ThisSize                           : double;
@@ -1467,15 +1554,13 @@ begin
 
    DaysLeft := DoDecode(This_Key_Priv);
 
-//   DaysLeft := 0;
-
    if ((DaysLeft < -1) or (ThisList.Strings[CURKEY] <> UserKey) or (This_Key_Priv.DBPrefix <> ThisList.Strings[COMPCD])) then begin
 
       DispLogMsg(ThreadNum + '       **Suspect activation key received. Flags:');
       DispLogMsg(ThreadNum + '          ReturnCode = ''' + IntToStr(DaysLeft) + '''');
       DispLogMsg(ThreadNum + '          DaysLeft = ''' + IntToStr(This_Key_Priv.DaysLeft) + '''');
       DispLogMsg(ThreadNum + '          CompanyCode = ''' + ThisList.Strings[COMPCD] + ''', DBPrefix = ''' + This_Key_Priv.DBPrefix + '''');
-      DispLogMsg(ThreadNum + '          UserKey = ''' + ThisList.Strings[CURKEY] + ''', SuppliedKey = ''' + UserKey + '''');
+      DispLogMsg(ThreadNum + '          SuppliedKey = ''' + ThisList.Strings[CURKEY] + ''', UserKey = ''' + UserKey + '''');
       DispLogMsg(ThreadNum + '       **Request denied');
       FLPMS_Main.Cursor := crDefault;
       LastMsg := '      **Suspect activation key received.';
@@ -1556,12 +1641,13 @@ begin
 
 //--- Update the database with the new key
 
-      S4 := 'UPDATE users SET LPMSKey_Renewals = ' + IntToStr(++UserRenewals) +
-            S2 + ', LPMSKey_Activation = ''' + This_Key_Info.Unique +
+      S4 := 'UPDATE users SET LPMSKey_Renewals = ' +
+            IntToStr(UserRenewals + 1) + S2 + ', LPMSKey_Activation = ''' +
+            This_Key_Info.Unique +
             ''', LPMSKey_ModBy = ''LPMS Server'', LPMSKey_ModOn = ''' +
             FormatDateTime('yyyy/MM/dd',Now()) + ''', LPMSKey_ModAt = ''' +
             FormatDateTime('HH:nn:ss',Now()) + ''' WHERE LPMSKey_Prefix = ''' +
-            ThisList.Strings[COMPCD] + S6;
+            ThisList.Strings[COMPCD] + '''' + S6;
 
       try
 
@@ -1918,9 +2004,6 @@ const
    OrdSmlA = Ord('a');
    OrdSmlZ = Ord('z');
 
-   CYPHER_ENC = 0;
-   CYPHER_DEC = 1;
-
 var
    idx1, idx2, PThisChr, NThisChr, PhraseLen, ThisKeyLen : integer;
    TempKey, NewPhrase, Encrypted                         : string;
@@ -2048,6 +2131,567 @@ begin
    end;
 
    RegIni.Destroy;
+
+end;
+
+//------------------------------------------------------------------------------
+// Function to decode a key contained in REC_Key_Priv (passed by reference)
+// and return a fully populated REC_Key_Priv. Function Result is the number of
+// days before the key expires
+//------------------------------------------------------------------------------
+function TFLPMS_Main.DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer;
+const
+   KeyLength : integer = 38;
+   KeyShort  : integer = 31;
+   UniqueLen : integer = 12;
+
+   KeySet1 : array[1..31] of integer = (5,9,1,14,31,29,27,20,22,10,26,15,11,21,16,6,12,17,3,7,4,18,23,19,25,8,13,24,2,30,28);
+   KeySet2 : array[1..31] of integer = (13,14,4,24,30,28,29,15,11,2,16,9,17,7,10,8,18,26,23,19,5,12,20,6,25,21,22,3,1,27,31);
+   KeySet3 : array[1..31] of integer = (8,2,26,11,28,30,31,15,5,24,16,13,17,6,22,3,19,18,1,9,20,7,23,4,25,10,21,12,14,29,27);
+
+var
+   idx, RandomRange, Save1, Save2, Hash1, Hash2 : integer;
+   Mod1, Mod2, ThisIdx, Month                   : integer;
+   ThisVal                                      : shortint;
+   WorkingDate, WorkingMonth, UnlockCode        : string;
+   KeySet                                       : array[1..31] of integer;
+   UniqueID                                     : array[1..12] of char;
+   DBPrefix                                     : array[1..6]  of char;
+   CodedKey, ScrambledKey                       : REC_Key_Overlay;
+
+begin
+
+   DefaultFormatSettings.ShortDateFormat := 'yyyy/MM/dd';
+   DefaultFormatSettings.DateSeparator   := '/';
+
+//--- Set all fields to 0 or false as a precaution
+
+   Decode_Key_Priv.DaysLeft         := 0;
+   Decode_Key_Priv.LPMS_Collections := False;
+   Decode_Key_Priv.LPMS_DocGen      := False;
+   Decode_Key_Priv.LPMS_Floating    := False;
+   Decode_Key_Priv.LPMS_Options4    := False;
+   Decode_Key_Priv.License          := ord(LIC_INVALID);
+   Decode_Key_Priv.DBPrefix         := '';
+   Decode_Key_Priv.Unique           := '000000000000';
+
+//--- Remove the "-" characters from the supplied key and copy to Key in Strings
+
+   if Length(Decode_Key_Priv.Key) <> KeyLength then begin
+
+      Decode_Key_Priv.DaysLeft := ord(ERR_LENGTH) - 3;
+      Result := Decode_Key_Priv.DaysLeft;
+      Exit;
+
+   end;
+
+   UnlockCode := Copy(Decode_Key_Priv.Key, 1, 4) + Copy(Decode_Key_Priv.Key, 6, 3) +
+                 Copy(Decode_Key_Priv.Key,10, 4) + Copy(Decode_Key_Priv.Key,15, 4) +
+                 Copy(Decode_Key_Priv.Key,20, 4) + Copy(Decode_Key_Priv.Key,25, 4) +
+                 Copy(Decode_Key_Priv.Key,30, 4) + Copy(Decode_Key_Priv.Key,35, 4);
+
+   for idx := 1 to KeyShort do
+      ScrambledKey.Strings.Key[idx] := char(UnlockCode[idx]);
+
+//--- Replace all '#' with '0' and '?' with '@'
+
+   for idx := 1 to KeyShort do begin
+
+      if ScrambledKey.Strings.Key[idx] = '#' then
+         ScrambledKey.Strings.Key[idx] := '0';
+
+      if ScrambledKey.Strings.Key[idx] = '?' then
+         ScrambledKey.Strings.Key[idx] := '@';
+
+   end;
+
+//--- Start off by extracting the range that was used to create the key
+
+   RandomRange := integer(ScrambledKey.Chars.Range) and $0F;
+
+   if (RandomRange < 0) or (RandomRange > 2) then begin
+
+      Decode_Key_Priv.DaysLeft := ord(ERR_INVALID) - 3;
+      Result := Decode_Key_Priv.DaysLeft;
+      Exit;
+
+   end;
+
+//--- Initialise the key set using the RandomRange
+
+   case RandomRange of
+      0: begin
+         for idx := 1 to KeyShort do
+            KeySet[idx] := KeySet1[idx];
+      end;
+
+      1: begin
+         for idx := 1 to KeyShort do
+            KeySet[idx] := KeySet2[idx];
+      end;
+
+      2: begin
+         for idx := 1 to KeyShort do
+            KeySet[idx] := KeySet3[idx];
+      end;
+
+   end;
+
+//--- Unscramble the supplied key into Coded form
+
+   for idx := 1 to KeyShort do begin
+
+      ThisVal := shortint(ScrambledKey.Strings.Key[idx]) and $0F;
+      ThisIdx := KeySet[idx];
+      CodedKey.Strings.Key[ThisIdx] := char(ThisVal);
+
+   end;
+
+//--- Check the HashCodes
+
+   Save1 := shortint(CodedKey.Chars.CheckSum1);
+   Save2 := shortint(CodedKey.Chars.CheckSum2);
+
+   CodedKey.Chars.CheckSum1 := char(0);
+   CodedKey.Chars.CheckSum2 := char(0);
+
+   Hash1 := 0;
+   Hash2 := 0;
+
+   for idx := 1 to UniqueLen do begin
+
+      ThisIdx := idx - 1;
+      Hash1 := Hash1 + (integer(CodedKey.Fields.Unique[idx]) * ThisIdx);
+
+   end;
+
+   Mod1 := Hash1 mod 11;
+
+   for idx := 1 to KeyShort do begin
+
+      ThisIdx := idx - 1;
+      Hash2 := Hash2 + (integer(CodedKey.Strings.Key[idx]) * ThisIdx);
+
+   end;
+
+   Mod2 := Hash2 mod 11;
+
+   if Save1 <> Mod1 then begin
+
+      Decode_Key_Priv.DaysLeft := ord(ERR_INVALID) - 3;
+      Result := Decode_Key_Priv.DaysLeft;
+      Exit;
+
+   end;
+
+   if Save2 <> Mod2 then begin
+
+      Decode_Key_Priv.DaysLeft := ord(ERR_INVALID) - 3;
+      Result := Decode_Key_Priv.DaysLeft;
+      Exit;
+
+   end;
+
+//--- Decode the unscrambled key - Only Fields that are required to be ASCII
+//--- display fields are transformed
+
+//--- Start with the Date
+
+   if shortint(CodedKey.Chars.ExpDateM) = $0A then
+      WorkingMonth := '10'
+   else if shortint(CodedKey.Chars.ExpDateM) = $0B then
+      WorkingMonth := '11'
+   else if shortint(CodedKey.Chars.ExpDateM) = $0C then
+      WorkingMonth := '12'
+   else begin
+
+      Month := integer(CodedKey.Chars.ExpDateM) or $30;
+      WorkingMonth := '0' + char(Month);
+
+   end;
+
+   CodedKey.Chars.ExpDateYL := char(integer(CodedKey.Chars.ExpDateYL) or $30);
+   CodedKey.Chars.ExpDateYR := char(integer(CodedKey.Chars.ExpDateYR) or $30);
+   CodedKey.Chars.ExpDateDL := char(integer(CodedKey.Chars.ExpDateDL) or $30);
+   CodedKey.Chars.ExpDateDR := char(integer(CodedKey.Chars.ExpDateDR) or $30);
+
+   WorkingDate := '20' + string(CodedKey.Chars.ExpDateYL) +
+                  string(CodedKey.Chars.ExpDateYR) + '/' + WorkingMonth +
+                  '/' + string(CodedKey.Chars.ExpDateDL) +
+                  string(CodedKey.Chars.ExpDateDR);
+
+//--- Extract the switches
+//--- Start with Switch 1 containing the Options
+
+   if (integer(CodedKey.Chars.Switch01) and $08) = $08 then
+      Decode_Key_Priv.LPMS_Collections := True
+   else
+      Decode_Key_Priv.LPMS_Collections := False;
+
+   if (integer(CodedKey.Chars.Switch01) and $04) = $04 then
+      Decode_Key_Priv.LPMS_DocGen := True
+   else
+      Decode_Key_Priv.LPMS_DocGen := False;
+
+   if (integer(CodedKey.Chars.Switch01) and $02) = $02 then
+      Decode_Key_Priv.LPMS_Floating := True
+   else
+      Decode_Key_Priv.LPMS_Floating := False;
+
+   if (integer(CodedKey.Chars.Switch01) and $01) = $01 then
+      Decode_Key_Priv.LPMS_Options4 := True
+   else
+      Decode_Key_Priv.LPMS_Options4 := False;
+
+//--- Now Switch 2 containing the license type
+
+   if (integer(CodedKey.Chars.Switch02) and $08) = $08 then
+      Decode_Key_Priv.License := ord(LIC_TRIAL)
+   else if (integer(CodedKey.Chars.Switch02) and $04) = $04 then
+      Decode_Key_Priv.License := ord(LIC_BROWSE)
+   else if (integer(CodedKey.Chars.Switch02) and $02) = $02 then
+      Decode_Key_Priv.License := ord(LIC_PERSONAL)
+   else if (integer(CodedKey.Chars.Switch02) and $01) = $01 then
+      Decode_Key_Priv.License := ord(LIC_GENERIC)
+   else
+      Decode_Key_Priv.License := ord(LIC_INVALID);
+
+//--- Extract the licensed MacAddress
+
+   for idx := 1 to UniqueLen do begin
+
+      if integer(CodedKey.Fields.Unique[idx]) > $09 then begin
+
+         CodedKey.Fields.Unique[idx] := char(integer(CodedKey.Fields.Unique[idx]) or $40);
+         CodedKey.Fields.Unique[idx] := char(integer(CodedKey.Fields.Unique[idx]) - 9);
+
+      end else
+         CodedKey.Fields.Unique[idx] := char(integer(CodedKey.Fields.Unique[idx]) or $30);
+
+      UniqueID[idx] := CodedKey.Fields.Unique[idx];
+
+   end;
+
+   Decode_Key_Priv.Unique := UniqueID;
+
+//--- Extract the DBPrefix
+
+   DBPrefix[1] := char((integer(CodedKey.Chars.DBPrefix01L) shl 4) + integer(CodedKey.Chars.DBPrefix01R));
+   DBPrefix[2] := char((integer(CodedKey.Chars.DBPrefix02L) shl 4) + integer(CodedKey.Chars.DBPrefix02R));
+   DBPrefix[3] := char((integer(CodedKey.Chars.DBPrefix03L) shl 4) + integer(CodedKey.Chars.DBPrefix03R));
+   DBPrefix[4] := char(integer(CodedKey.Chars.DBPrefix04) or $30);
+   DBPrefix[5] := char(integer(CodedKey.Chars.DBPrefix05) or $30);
+   DBPrefix[6] := char(integer(CodedKey.Chars.DBPrefix06) or $30);
+
+   Decode_Key_Priv.DBPrefix := DBPrefix;
+
+//--- Calculate the number of days remaining
+
+   Decode_Key_Priv.KeyDate := WorkingDate;
+
+   if WorkingDate < FormatDateTime(DefaultFormatSettings.ShortDateFormat,Date()) then begin
+
+      Decode_Key_Priv.DaysLeft := ord(ERR_EXPIRED) - 3;
+      Result := Decode_Key_Priv.DaysLeft;
+      Exit;
+
+   end;
+
+   try
+      Decode_Key_Priv.DaysLeft := DaysBetween(Now(),(StrToDate(WorkingDate)));
+   except
+
+      Decode_Key_Priv.DaysLeft := ord(ERR_INVALID) - 3;
+      Result := Decode_Key_Priv.DaysLeft;
+      Exit;
+
+   end;
+
+   Result := Decode_Key_Priv.DaysLeft;
+
+end;
+
+//------------------------------------------------------------------------------
+// Function to encode a key with the values contained in REC_Key_Values and
+// return a fully populated REC_Key_Values structure with the encoded Key
+// in the 'Unique' field. Function Result is True if successful otherwise it
+// is False
+//------------------------------------------------------------------------------
+function TFLPMS_Main.DoEncode(var Encode_Key_Values: REC_Key_Values): boolean;
+const
+   KeyShort  : integer = 31;
+   UniqueLen : integer = 12;
+
+   KeyVal1 : array[1..31] of integer = (5,4,5,3,3,4,5,5,4,3,4,5,5,4,3,5,4,3,4,3,4,3,4,4,5,4,4,5,3,5,4);
+   KeyVal2 : array[1..31] of integer = (5,5,5,4,5,4,3,4,5,5,3,3,4,4,4,4,3,3,5,3,3,4,4,3,5,4,5,4,4,4,4);
+   KeyVal3 : array[1..31] of integer = (4,4,3,4,3,5,4,4,5,4,4,5,3,4,5,5,3,4,5,5,4,3,4,3,5,5,4,3,4,3,3);
+
+   KeySet1 : array[1..31] of integer = (5,9,1,14,31,29,27,20,22,10,26,15,11,21,16,6,12,17,3,7,4,18,23,19,25,8,13,24,2,30,28);
+   KeySet2 : array[1..31] of integer = (13,14,4,24,30,28,29,15,11,2,16,9,17,7,10,8,18,26,23,19,5,12,20,6,25,21,22,3,1,27,31);
+   KeySet3 : array[1..31] of integer = (8,2,26,11,28,30,31,15,5,24,16,13,17,6,22,3,19,18,1,9,20,7,23,4,25,10,21,12,14,29,27);
+
+var
+
+{$IFDEF DARWIN}
+   RandomRange                            : extended;
+{$ELSE}
+   RandomRange                            : integer;
+{$ENDIF}
+   i, RandomInt, Hash1, Hash2, Mod1, Mod2 : integer;
+   S1, S2                                 : char;
+   WorkingDate, WorkingMonth, UnlockCode  : string;
+   KeyVal, KeySet                         : array[1..31] of integer;
+   DBPrefix                               : array[1..6]  of char;
+   CodedKey, PlainKey, HashKey            : REC_Key_Overlay;
+
+begin
+
+   S1 := #00;
+   S2 := #00;
+
+//--- Start off by choosing a range to use
+
+   Randomize;
+
+{$IFDEF DARWIN}
+
+   RandomRange := Random();
+
+   if RandomRange < 0.3 then
+      RandomInt := 0
+   else if RandomRange < 0.7 then
+      RandomInt := 1
+   else
+      RandomInt := 2;
+
+{$ELSE}
+
+   RandomRange := Random(300);
+
+   if RandomRange > 200 then
+      RandomInt := 0
+   else if RandomRange < 100 then
+      RandomInt := 2
+   else
+      RandomInt := 1;
+
+{$ENDIF}
+
+//--- Extract and place the ExpiryDate
+
+   if Encode_Key_Values.ExpDate.Substring(5,2) > '09' then begin
+
+      if Encode_Key_Values.ExpDate.SubString(5,2) = '10' then
+         WorkingMonth := 'J'
+      else if Encode_Key_Values.ExpDate.SubString(5,2) = '11' then
+         WorkingMonth := 'K'
+      else
+         WorkingMonth := 'L';
+
+   end else
+      WorkingMonth := Encode_Key_Values.ExpDate.SubString(6,1);
+
+   WorkingDate := Encode_Key_Values.ExpDate.SubString(2,2) + WorkingMonth + Encode_Key_Values.ExpDate.SubString(8,2);
+   PlainKey.Fields.ExpDate := WorkingDate;
+
+//--- Create and place the switches
+
+   case Encode_Key_Values.License of
+
+      ord(LIC_TRIAL):    S2 := char(integer(S2) or $08);
+      ord(LIC_BROWSE):   S2 := char(integer(S2) or $04);
+      ord(LIC_PERSONAL): S2 := char(integer(S2) or $02);
+      ord(LIC_GENERIC):  S2 := char(integer(S2) or $01);
+
+   end;
+
+   if Encode_Key_Values.LPMS_Collections = True then
+      S1 := char(integer(S1) or $08);
+
+   if Encode_Key_Values.LPMS_DocGen      = True then
+      S1 := char(integer(S1) or $04);
+
+   if Encode_Key_Values.LPMS_Floating    = True then
+      S1 := char(integer(S1) or $02);
+
+   if Encode_Key_Values.LPMS_Options4    = True then
+      S1 := char(integer(S1) or $01);
+
+   PlainKey.Chars.Switch01 := S1;
+   PlainKey.Chars.Switch02 := S2;
+
+//--- Extract and place the Unique ID
+
+   PlainKey.Fields.Unique := Encode_Key_Values.Unique;
+
+   for i := 1 to UniqueLen do begin
+
+      if PlainKey.Fields.Unique[i] >= 'A' then
+         PlainKey.Fields.Unique[i] := char(integer(PlainKey.Fields.Unique[i]) + 9);
+
+   end;
+
+//--- Extract and place the Range
+
+   PlainKey.Chars.Range := char(RandomInt);
+
+//--- Insert the DBPrefix
+
+   DBPrefix := Encode_Key_Values.DBPrefix;
+
+   PlainKey.Chars.DBPrefix01L := char(integer(integer(DBPrefix[1]) and $F0) shr 4);
+   PlainKey.Chars.DBPrefix01R := char(integer(DBPrefix[1]) and $0F);
+   PlainKey.Chars.DBPrefix02L := char(integer(integer(DBPrefix[2]) and $F0) shr 4);
+   PlainKey.Chars.DBPrefix02R := char(integer(DBPrefix[2]) and $0F);
+   PlainKey.Chars.DBPrefix03L := char(integer(integer(DBPrefix[3]) and $F0) shr 4);
+   PlainKey.Chars.DBPrefix03R := char(integer(DBPrefix[3]) and $0F);
+   PlainKey.Chars.DBPrefix04  := char(integer(DBPrefix[4]) and $0F);
+   PlainKey.Chars.DBPrefix05  := char(integer(DBPrefix[5]) and $0F);
+   PlainKey.Chars.DBPrefix06  := char(integer(DBPrefix[6]) and $0F);
+
+//--- Calculate the Hash Totals and insert
+
+   PlainKey.Chars.CheckSum1 := #00;
+   PlainKey.Chars.CheckSum2 := #00;
+
+   for i := 1 to KeyShort do
+      HashKey.Strings.Key[i] := char(shortint(PlainKey.Strings.Key[i]) and $0F);
+
+   Hash1 := 0;
+   Hash2 := 0;
+
+   for i := 1 to UniqueLen do
+      Hash1 := Hash1 + integer(HashKey.Fields.Unique[i]) * (i - 1);
+
+   Mod1 := Hash1 mod 11;
+
+   for i := 1 to KeyShort do
+      Hash2 := Hash2 + integer(HashKey.Strings.Key[i]) * (i - 1);
+
+   Mod2 := Hash2 mod 11;
+
+   PlainKey.Chars.CheckSum1 := char(Mod1);
+   PlainKey.Chars.CheckSum2 := char(Mod2);
+
+//--- Transform the plain text key into a coded key
+
+   case RandomInt of
+
+      0: begin
+
+            for i := 1 to KeyShort do
+               KeyVal[i] := KeyVal1[i];
+
+      end;
+
+      1: begin
+
+         for i := 1 to KeyShort do
+            KeyVal[i] := KeyVal2[i];
+
+      end;
+
+      2: begin
+
+         for i := 1 to KeyShort do
+            KeyVal[i] := KeyVal3[i];
+
+      end;
+
+   end;
+
+   for i := 1 to KeyShort do begin
+
+      case KeyVal[i] of
+
+         3: begin
+
+            PlainKey.Strings.Key[i] := char(shortint(PlainKey.Strings.Key[i]) and $0F);
+
+            if shortint(PlainKey.Strings.Key[i]) > $09 then
+               PlainKey.Strings.Key[i] := char(shortint(PlainKey.Strings.Key[i]) or $40)
+            else
+               PlainKey.Strings.Key[i] := char(shortint(PlainKey.Strings.Key[i]) or $30);
+
+         end;
+
+         4: begin
+
+            PlainKey.Strings.Key[i] := char(shortint(PlainKey.Strings.Key[i]) and $0F);
+            PlainKey.Strings.Key[i] := char(shortint(PlainKey.Strings.Key[i]) or $40);
+
+         end;
+
+         5: begin
+
+            PlainKey.Strings.Key[i] := char(shortint(PlainKey.Strings.Key[i]) and $0F);
+
+            if shortint(PlainKey.Strings.Key[i]) > $0A then
+               PlainKey.Strings.Key[i] := char(shortint(PlainKey.Strings.Key[i]) or $40)
+            else
+               PlainKey.Strings.Key[i] := char(shortint(PlainKey.Strings.Key[i]) or $50);
+
+         end;
+
+      end;
+
+   end;
+
+//--- Scramble the coded key using a random set
+
+   case RandomInt of
+
+      0: begin
+
+            for i := 1 to KeyShort do
+               KeySet[i] := KeySet1[i];
+
+      end;
+
+      1: begin
+
+            for i := 1 to KeyShort do
+               KeySet[i] := KeySet2[i];
+
+      end;
+
+      2: begin
+
+            for i := 1 to KeyShort do
+               KeySet[i] := KeySet3[i];
+
+      end;
+
+   end;
+
+   for i := 1 to KeyShort do
+      CodedKey.Strings.Key[i] := PlainKey.Strings.Key[KeySet[i]];
+
+//--- Replace all '@' with '?' and '0' with '#'
+
+   for i := 1 to KeyShort do begin
+
+      if CodedKey.Strings.Key[i] = '@' then
+         CodedKey.Strings.Key[i] := '?';
+
+      if CodedKey.Strings.Key[i] = '0' then
+         CodedKey.Strings.Key[i] := '#';
+
+   end;
+
+//--- Format the coded and scrambled key into an Unlock Key
+
+   UnlockCode := CodedKey.Strings.Key;
+
+   Encode_Key_Values.Unique := Copy(UnlockCode, 1,4) + '-' +
+                               Copy(UnlockCode, 5,3) + '-' +
+                               Copy(UnlockCode, 8,4) + '-' +
+                               Copy(UnlockCode,12,4) + '-' +
+                               Copy(UnlockCode,16,4) + '-' +
+                               Copy(UnlockCode,20,4) + '-' +
+                               Copy(UnlockCode,24,4) + '-' +
+                               Copy(UnlockCode,28,4);
+   Result := True;
 
 end;
 
