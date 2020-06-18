@@ -1036,7 +1036,7 @@ begin
             end;
 
             DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Unique Identifier(s): ' + ToUpper(ThisMsg));
-            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Checking user record for ''' + ThisList.Strings[2] + ''':');
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Checking user record for ''' + ThisList.Strings[2] + ''':');
 
 //--- Process the request
 
@@ -1302,21 +1302,21 @@ begin
 
          end else begin
 
-            AContext.Connection.Disconnect();
             DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Invalid request: ''' + Request + ''', connection terminated');
+            AContext.Connection.Disconnect();
 
          end;
 
       end;
 
-      AContext.Connection.Disconnect();
       DispLogMsg(IntToStr(AContext.Binding.Handle) + ' Connection Request completed');
+      AContext.Connection.Disconnect();
       Exit;
 
    end else begin
 
-      AContext.Connection.Disconnect();
       DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Invalid request: '' + Request + '', connection terminated');
+      AContext.Connection.Disconnect();
       Exit;
 
    end;
@@ -1342,7 +1342,7 @@ var
    UserRenewals, UserXfer, UserNewLicense, Interval : integer;
    DaysLeft, idx1                                   : integer;
    UserBlocked, CompBlocked, Found                  : boolean;
-   UserUnique, UserExpiry, UserKey, CompName        : string;
+   UserUnique, UserExpiry, UserKey{, CompName}        : string;
    UserNewPrefix, S1, S2, S3, S4, S5, S6            : string;
    This_Key_Priv                                    : REC_Key_Priv;
    This_Key_Info                                    : REC_Key_Values;
@@ -1467,13 +1467,15 @@ begin
 
    DaysLeft := DoDecode(This_Key_Priv);
 
+//   DaysLeft := 0;
+
    if ((DaysLeft < -1) or (ThisList.Strings[CURKEY] <> UserKey) or (This_Key_Priv.DBPrefix <> ThisList.Strings[COMPCD])) then begin
 
       DispLogMsg(ThreadNum + '       **Suspect activation key received. Flags:');
       DispLogMsg(ThreadNum + '          ReturnCode = ''' + IntToStr(DaysLeft) + '''');
       DispLogMsg(ThreadNum + '          DaysLeft = ''' + IntToStr(This_Key_Priv.DaysLeft) + '''');
       DispLogMsg(ThreadNum + '          CompanyCode = ''' + ThisList.Strings[COMPCD] + ''', DBPrefix = ''' + This_Key_Priv.DBPrefix + '''');
-      DispLogMsg(ThreadNum + '          GeneratedKey = ''' + ThisList.Strings[CURKEY] + ''', UserKey = ''' + UserKey + '''');
+      DispLogMsg(ThreadNum + '          UserKey = ''' + ThisList.Strings[CURKEY] + ''', SuppliedKey = ''' + UserKey + '''');
       DispLogMsg(ThreadNum + '       **Request denied');
       FLPMS_Main.Cursor := crDefault;
       LastMsg := '      **Suspect activation key received.';
@@ -1629,6 +1631,7 @@ begin
    ThisItem.Caption := FormatDateTime('yyyy/MM/dd',Now());
    ThisItem.SubItems.Add(FormatDateTime('HH:mm:ss.zzz',Now()));
    ThisItem.SubItems.Add(ThisMsg);
+   lvLog.Repaint;
    ThisItem.MakeVisible(False);
 
 end;
