@@ -20,10 +20,10 @@ interface
 // Uses clause
 //------------------------------------------------------------------------------
 uses
-  Classes, SysUtils, sqldb, mssqlconn, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, StdCtrls, Buttons, ComCtrls, ActnList, Menus, Spin, EditBtn,
-  IdTCPServer, LazFileUtils, usplashabout, IdContext, Process, StrUtils,
-  Character, Math, LCLType, DateUtils,
+  Classes, SysUtils, sqldb, fpstdexports, mssqlconn, Forms, Controls, Graphics,
+  Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, ActnList, Menus, Spin,
+  EditBtn, IdTCPServer, LazFileUtils, usplashabout, IdContext, Process,
+  StrUtils, Character, Math, LCLType, DateUtils,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    Registry, mysql56conn;
@@ -101,6 +101,7 @@ type
     HelpAbout: TAction;
     HelpHelp: TAction;
     Helpinformation1: TMenuItem;
+    sdBrowse: TSelectDirectoryDialog;
     SQLTran: TSQLTransaction;
     tcpServer: TIdTCPServer;
     spePort: TSpinEdit;
@@ -169,6 +170,7 @@ type
     procedure ShowLPMSServerClick(Sender: TObject);
     procedure tcpServerConnect(AContext: TIdContext);
     procedure tcpServerExecute(AContext: TIdContext);
+    procedure ToolsFirstRunExecute(Sender: TObject);
     procedure ToolsLogExecute(Sender: TObject);
     procedure ToolsMinimiseExecute(Sender: TObject);
     procedure ToolsPropertiesExecute(Sender: TObject);
@@ -394,6 +396,11 @@ end;
 // Global variables
 //------------------------------------------------------------------------------
 const
+   LICTYPE_INVALID    = 0;
+   LICTYPE_TRIAL      = 1;
+   LICTYPE_PERSONAL   = 2;
+   LICTYPE_BROWSE     = 3;
+   LICTYPE_GENERIC    = 4;
    TYPE_PLAIN         = 1;
    TYPE_CODED         = 2;
    BUFFERLEN          = 1024;
@@ -530,12 +537,14 @@ begin
          end;
 
 
-         if jvBrowse.Execute = False then begin
+         if sdBrowse.Execute = False then begin
 
             Application.Terminate;
             Exit;
 
          end;
+
+         LocalPath := AppendPathDelim(sdBrowse.FileName);
 
       end;
 
@@ -763,11 +772,6 @@ begin
 
    DispLogMsg('*** LPMS Server - Shutdown request received, shutting down');
 
-//--- Save the Log to disk
-
-   SaveLog(LogPath);
-   SQLQry1.Close();
-
 //--- Save form layout and placement
 
    FLPMS_Main_Layout.Width           := FLPMS_Main.Width;
@@ -780,11 +784,18 @@ begin
 
    Do_Layout('FLPMS_Main',TYPE_SAVE);
 
+   FLPMS_Main.Hide;
+
+//--- Save the Log to disk
+
+   SaveLog(LogPath);
+   SQLQry1.Close();
+
    LogList.Destroy;
 
-{$ifdef WINDOWS}
+{$IFDEF WINDOWS}
    trIcon.Visible := False;
-{$endif}
+{$ENDIF}
 
 end;
 
@@ -1042,11 +1053,11 @@ end;
 procedure TFLPMS_Main.ToolsMinimiseExecute(Sender: TObject);
 begin
 
-{$ifdef Windows}
+{$IFDEF WINDOWS}
    FLPMS_Main.Hide;
-{$else}
+{$ELSE}
    Application.Minimize;
-{$endif}
+{$ENDIF}
 
 end;
 
@@ -1410,6 +1421,58 @@ begin
 
 end;
 
+procedure TFLPMS_Main.ToolsFirstRunExecute(Sender: TObject);
+var
+   idx     : integer;
+   SMUtil  : string;
+   Process : TProcess;    // Used for executing LPMS_Utility
+
+begin
+
+//--- User want to invoke LPMS_Utility. Make sure the external program exists
+//--- and can be called.
+
+      SMUtil := ExtractFilePath(Application.ExeName) + FirstRun;
+{$IFDEF WINDOWS}
+      SMUtil := SMUtil + '.exe';
+{$ENDIF}
+
+      if FileExists(SMUtil) = False then begin
+
+         Application.MessageBox(PChar('Unable to locate external utility ''' + FirstRun + ''''),'LPMS Server',(MB_OK + MB_ICONSTOP));
+         Exit;
+
+      end;
+
+      Process := TProcess.Create(nil);
+
+      try
+
+         Process.InheritHandles := False;
+         Process.Options        := [poWaitOnExit];
+         Process.ShowWindow     := swoShow;
+
+   //--- Copy default environment variables including DISPLAY variable for GUI
+   //--- application to work
+
+         for idx := 1 to GetEnvironmentVariableCount do
+            Process.Environment.Add(GetEnvironmentString(idx));
+
+         Process.Executable := SMUtil;
+//         Process.Parameters.Add('--args');
+//         Process.Parameters.Add('-FBSD SEND EMAIL');
+//         Process.Parameters.Add('-P' + SMTPStr);
+
+         FLPMS_Main.Hide();
+         Process.Execute;
+         FLPMS_Main.Show();
+
+      finally
+         Process.Free;
+      end;
+
+end;
+
 //---------------------------------------------------------------------------
 // Function to retrieve the requesting user's information from the Database
 //---------------------------------------------------------------------------
@@ -1419,7 +1482,7 @@ const
    COMPCD           = 2;
    UNIQUE           = 3;
 //   LICTYPE_INVALID  = 0;
-   LICTYPE_TRIAL    = 1;
+//   LICTYPE_TRIAL    = 1;
 //   LICTYPE_PERSONAL = 2;
 //   LICTYPE_BROWSE   = 3;
 //   LICTYPE_GENERIC  = 4;
@@ -1692,16 +1755,117 @@ end;
 // Function to check whether an evaluation user has been registered before
 //---------------------------------------------------------------------------
 function TFLPMS_Main.GetRegistration(ThisUnique: string):boolean;
+var
+   S1 : string;
+
 begin
-   Result := True;
+
+   S1     := 'SELECT LPMSKey_Unique, LPMSKey_Name, LPMSKey_Email, LPMSKey_Company FROM users WHERE LPMSKey_Unique = ''' + ThisUnique + '''';
+
+   FLPMS_Main.Cursor := crHourGlass;
+
+//--- Get the user related information
+
+   try
+
+      SQLQry1.Close();
+      SQLQry1.SQL.Text := S1;
+      SQLQry1.Open();
+
+      Except on Err : Exception do begin
+
+         DispLogMsg(ThreadNum + '      **Unexpected Data Base [users] error: ''' + Err.Message + '''');
+         FLPMS_Main.Cursor := crDefault;
+         Exit;
+
+      end;
+
+   end;
+
+   if SQLQry1.RecordCount = 0 then
+      Result := True
+   else begin
+
+      DispLogMsg(ThreadNum + '      **Unique identifier already registered to ''' + SQLQry1.FieldByName('LPMSKey_Company').AsString + '''.''' + SQLQry1.FieldByName('LPMSKey_Name').AsString + ''' (' + SQLQry1.FieldByName('LPMSKey_Email').AsString + ')''');
+      DispLogMsg(ThreadNum + '      **Request denied');
+      FLPMS_Main.Cursor := crDefault;
+
+      Result := False;
+
+   end;
+
 end;
 
 //---------------------------------------------------------------------------
 // Procedure to register a new evaluation user
 //---------------------------------------------------------------------------
 procedure TFLPMS_Main.RegisterUser(ThisList, ThisReply: TStringList);
+var
+   S1, ExpiryDate, ThisKey, TimeStamp : string;
+   This_Key_Info                      : REC_Key_Values;
+
 begin
-   //
+
+   TimeStamp  := FormatDateTime('yyyy/MM/dd',Now()) + '+' + FormatDateTime('hh:nn:ss:zzz',Now()) + '+LPMS_Server';
+   ExpiryDate := FormatDateTime('yyyy/MM/dd',(Date() + 14));
+
+   This_Key_Info.Unique           := ThisList.Strings[5];
+   This_Key_Info.ExpDate          := ExpiryDate;
+   This_Key_Info.DBPrefix         := ThisList.Strings[6];
+   This_Key_Info.LPMS_Collections := True;
+   This_Key_Info.LPMS_DocGen      := True;
+   This_Key_Info.LPMS_Floating    := True;
+   This_Key_Info.LPMS_Options4    := True;
+   This_Key_Info.License          := LICTYPE_TRIAL;
+
+   if DoEncode(This_Key_Info) = False then
+      Exit;
+
+   ThisKey := This_Key_Info.Unique;
+
+   S1 := 'INSERT INTO users (LPMSKey_Name, LPMSKey_Company, LPMSKey_Email, LPMSKey_Contact, LPMSKey_Prefix, LPMSKey_Unique, LPMSKey_LicType, LPMSKey_ExpiryDate, LPMSKey_Activation, LPMSKey_Blocked, LPMSKey_Renewals, LPMSKey_CreatedBy, LPMSKey_CreatedOn, LPMSKey_CreatedAt, LPMSKey_TimeStamp) VALUES(''' +
+        ThisList.Strings[1] + ''', ''' + ThisList.Strings[4] + ''', ''' +
+        ThisList.Strings[2] + ''', ''' + ThisList.Strings[3] + ''', ''' +
+        ThisList.Strings[6] + ''', ''' + ThisList.Strings[5] + ''', 1, ''' +
+        ExpiryDate + ''', ''' + ThisKey + ''', 0, 0, ''LPMS_Server'', ''' +
+        FormatDateTime('yyyy/MM/dd',Now()) + ''', ''' +
+        FormatDateTime('HH:nn:ss',Now()) + ''', ''' + TimeStamp + ''')';
+
+   FLPMS_Main.Cursor := crHourGlass;
+
+//--- Get the user related information
+
+   try
+
+      SQLQry1.Close();
+      SQLQry1.SQL.Text := S1;
+      SQLQry1.ExecSQL();
+
+      Except on Err : Exception do begin
+
+         DispLogMsg(ThreadNum + '      **Unexpected Data Base [users] error: ''' + Err.Message + '''');
+         FLPMS_Main.Cursor := crDefault;
+
+         ThisReply.Add(IntToStr(REPLY_FAIL));
+         ThisReply.Add(IntToStr(ACTION_DISPMSG));
+         ThisReply.Add('Registration Request Failed (' + PChar('      **Unexpected Data Base [users] error: ''' + Err.Message + '''') + ') - Please contact BlueCrane Software Development by sending an email to ' + ThisEmail + ' describing the events that lead up to this message');
+
+         Exit;
+
+      end;
+
+   end;
+
+   ThisReply.Add(IntToStr(REPLY_SUCCESS));
+   ThisReply.Add(IntToStr(ACTION_DISPMSG));
+   ThisReply.Add('Request for registration successfully completed');
+   ThisReply.Add(IntToStr(ACTION_UPDATEREG));
+   ThisReply.Add('Key');
+   ThisReply.Add(ThisKey);
+   ThisReply.Add(IntToStr(ACTION_UPDATEREG));
+   ThisReply.Add('DBPrefix');
+   ThisReply.Add(ThisList.Strings[6]);
+
 end;
 
 //---------------------------------------------------------------------------
