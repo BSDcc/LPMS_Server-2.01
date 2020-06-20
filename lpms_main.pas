@@ -58,6 +58,19 @@ type
     About1: TMenuItem;
     About2: TMenuItem;
     AboutLegalDiary1: TMenuItem;
+    edtACMParm: TEditButton;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
+    ToolButton12: TToolButton;
+    ToolButton13: TToolButton;
+    ToolButton14: TToolButton;
+    ToolButton15: TToolButton;
+    UtilitiesACM: TAction;
+    UtilitiesBackup: TAction;
+    UtilitiesSendMail: TAction;
     actList: TActionList;
     Bevel1: TBevel;
     Bevel2: TBevel;
@@ -151,7 +164,7 @@ type
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
-    ToolsFirstRun: TAction;
+    UilitiesFirstRun: TAction;
     ToolsLog: TAction;
     ToolsMinimise: TAction;
     ToolsProperties: TAction;
@@ -167,10 +180,11 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure HelpAboutExecute(Sender: TObject);
+    procedure lvLogClick(Sender: TObject);
     procedure ShowLPMSServerClick(Sender: TObject);
     procedure tcpServerConnect(AContext: TIdContext);
     procedure tcpServerExecute(AContext: TIdContext);
-    procedure ToolsFirstRunExecute(Sender: TObject);
+    procedure UilitiesFirstRunExecute(Sender: TObject);
     procedure ToolsLogExecute(Sender: TObject);
     procedure ToolsMinimiseExecute(Sender: TObject);
     procedure ToolsPropertiesExecute(Sender: TObject);
@@ -295,6 +309,9 @@ type
 {$ENDIF}
 }
 
+procedure UtilitiesACMExecute(Sender: TObject);
+procedure UtilitiesBackupExecute(Sender: TObject);
+procedure UtilitiesSendMailExecute(Sender: TObject);
 private  { Private Declarations }
 
    ButtonLegend     : integer;      //
@@ -316,7 +333,10 @@ private  { Private Declarations }
    CurrVersion      : string;       //
    DestFile         : string;       //
    DownloadHost     : string;       //
-   FirstRun         : string;       //
+   FirstRun         : string;       // Holds the name of the LPMS_Utility program
+   SendMail         : string;       // Holds the name of the BSD_SendEmail program
+   Backup           : string;       // Holds the name of the LPMS_Backup program
+   Access           : string;       // Holds the name of the LPMS_ACM program
    LastMsg          : string;       //
    LocalPath        : string;       // Dir where Log, Config File and Back Instructions File are stored
    LogPath          : string;       //
@@ -370,6 +390,7 @@ private  { Private Declarations }
 {$ENDIF}
 }
 
+   procedure CallExtern(ThisType: integer);
    function  GetUser(ThisList: TStringList): boolean;
    function  GetRegistration(ThisUnique: string):boolean;
    procedure RegisterUser(ThisList, ThisReply: TStringList);
@@ -420,6 +441,10 @@ const
    ACTION_DOXFER      = 3;
    ACTION_DOWNLOAD    = 4;
    ACTION_OPEN        = 5;
+   EXTERN_UTILITY     = 1;
+   EXTERN_SENDMAIL    = 2;
+   EXTERN_BACKUP      = 3;
+   EXTERN_ACM         = 4;
    SERVER_DELIM       = '|';
 
 var
@@ -583,6 +608,11 @@ begin
 
    end;
 
+//--- Set the Encode/Decode key
+
+   SecretPhrase := 'Blue Crane Software Development CC';
+   ThisEmail    := 'registration@bluecrane.cc';
+
 //--- Get the default values stored in the Registry
 
 {$IFDEF WINDOWS}
@@ -605,10 +635,13 @@ begin
    SpecialMsg     := RegIni.ReadString('Preferences','SpecialMsg','');
    DownloadHost   := RegIni.ReadString('Preferences','DownloadHost','');
    UserID         := RegIni.ReadString('Preferences','UserID','');
-   Password       := RegIni.ReadString('Preferences','Password','');
+   Password       := Vignere(CYPHER_DEC,RegIni.ReadString('Preferences','Password',''),SecretPhrase);
    DestFile       := RegIni.ReadString('Preferences','DestFile','');
    SourceFile     := RegIni.ReadString('Preferences','SourceFile','');
-   FirstRun       := RegIni.ReadString('Preferences','FirstRunExe','');
+   FirstRun       := RegIni.ReadString('Preferences','FirstRunExe','LPMS_Utility');
+   SendMail       := RegIni.ReadString('Preferences','SendMailExe','BSD_SendEmail');
+   Backup         := RegIni.ReadString('Preferences','BackupExe','LPMS_Backup');
+   Access         := RegIni.ReadString('Preferences','ACMExe','LPMS_ACM');
 
    RegIni.Destroy;
 
@@ -622,11 +655,6 @@ begin
    SQLCon.DatabaseName := 'lpmsdefault';
    SQLTran.DataBase    := SQLCon;
    SQLQry1.Transaction := SQLTran;
-
-//--- Set the Encode/Decode key
-
-   SecretPhrase := 'Blue Crane Software Development CC';
-   ThisEmail    := 'registrations@bluecrane.cc';
 
 //   Testing := Vignere(CYPHER_ENC,'This is a test Key',SecretPhrase);
 //   Testing := Vignere(CYPHER_DEC,Testing,SecretPhrase);
@@ -875,7 +903,7 @@ begin
    ButtonLegend   := cbxLegend.ItemIndex;
    DownloadHost   := edtHostname.Text;
    UserID         := edtUserID.Text;
-   Password       := edtPassword.Text;
+   Password       := Vignere(CYPHER_ENC, edtPassword.Text, SecretPhrase);
    DestFile       := edtDestFile.Text;
    SourceFile     := edtSourceFile.Text;
    DownloadActive := chkDownload.Checked;
@@ -1068,6 +1096,58 @@ procedure TFLPMS_Main.ToolsRestoreExecute(Sender: TObject);
 begin
 
    FLPMS_Main.Show;
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked the button to invoke LPMS_Utility
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.UilitiesFirstRunExecute(Sender: TObject);
+begin
+
+   CallExtern(EXTERN_UTILITY);
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked the button to invoke BSD_SendEmail utility
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.UtilitiesSendMailExecute(Sender: TObject);
+begin
+
+   CallExtern(EXTERN_SENDMAIL);
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked the button to invoke LPMS_Backup Manager
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.UtilitiesBackupExecute(Sender: TObject);
+begin
+
+   CallExtern(EXTERN_BACKUP);
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked the button to invoke LPMS_ACM
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.UtilitiesACMExecute(Sender: TObject);
+begin
+
+   CallExtern(EXTERN_ACM);
+
+end;
+
+//------------------------------------------------------------------------------
+// User clicked on the Log view - Transfr the selected row to the display
+// field at the bottom of the screen
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.lvLogClick(Sender: TObject);
+begin
+
+   if lvLog.ItemIndex >= 0 then
+      edtACMParm.Text := lvLog.Items.Item[lvLog.ItemIndex].SubItems.Strings[1];
 
 end;
 
@@ -1421,55 +1501,89 @@ begin
 
 end;
 
-procedure TFLPMS_Main.ToolsFirstRunExecute(Sender: TObject);
+//------------------------------------------------------------------------------
+// Procedure to call an external program
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.CallExtern(ThisType: integer);
 var
    idx     : integer;
    SMUtil  : string;
-   Process : TProcess;    // Used for executing LPMS_Utility
+   Process : TProcess;
 
 begin
 
 //--- User want to invoke LPMS_Utility. Make sure the external program exists
 //--- and can be called.
 
-      SMUtil := ExtractFilePath(Application.ExeName) + FirstRun;
+   SMUtil := ExtractFilePath(Application.ExeName);
+
+   case ThisType of
+
+      EXTERN_UTILITY  : SMUtil := SMUtil + FirstRun;
+      EXTERN_SENDMAIL : SMUtil := SMUtil + SendMail;
+      EXTERN_BACKUP   : SMUtil := SMUtil + Backup;
+      EXTERN_ACM      : SMUtil := SMUtil + Access;
+
+   end;
+
 {$IFDEF WINDOWS}
-      SMUtil := SMUtil + '.exe';
+   SMUtil := SMUtil + '.exe';
 {$ENDIF}
 
-      if FileExists(SMUtil) = False then begin
+   if FileExists(SMUtil) = False then begin
 
-         Application.MessageBox(PChar('Unable to locate external utility ''' + FirstRun + ''''),'LPMS Server',(MB_OK + MB_ICONSTOP));
-         Exit;
+      Application.MessageBox(PChar('Unable to locate external utility ''' + SMUtil + ''''),'LPMS Server',(MB_OK + MB_ICONSTOP));
+      Exit;
+
+   end;
+
+   Process := TProcess.Create(nil);
+
+   try
+
+      Process.InheritHandles := False;
+      Process.Options        := [poWaitOnExit];
+      Process.ShowWindow     := swoShow;
+
+//--- Copy default environment variables including DISPLAY variable for GUI
+//--- application to work
+
+      for idx := 1 to GetEnvironmentVariableCount do
+         Process.Environment.Add(GetEnvironmentString(idx));
+
+      Process.Executable := SMUtil;
+
+      case ThisType of
+
+         EXTERN_SENDMAIL: begin
+
+            Process.Parameters.Add('--args');
+            Process.Parameters.Add('-FLPMS_SRVER - BSD SEND EMAIL');
+            Process.Parameters.Add('-Pmail.bluecrane.cc|' + ThisEmail + '|Isidra01a#');
+            Process.Parameters.Add('-O' + ThisEmail);
+
+         end;
+
+
+         EXTERN_ACM: begin
+
+            Process.Parameters.Add('--args');
+            Process.Parameters.Add('-H' + ServerHost);
+            Process.Parameters.Add('-uLPMSAdmin');
+            Process.Parameters.Add('-pLA01');
+            Process.Parameters.Add('-K' + edtACMParm.Text);
+
+         end;
 
       end;
 
-      Process := TProcess.Create(nil);
+      FLPMS_Main.Hide();
+      Process.Execute;
+      FLPMS_Main.Show();
 
-      try
-
-         Process.InheritHandles := False;
-         Process.Options        := [poWaitOnExit];
-         Process.ShowWindow     := swoShow;
-
-   //--- Copy default environment variables including DISPLAY variable for GUI
-   //--- application to work
-
-         for idx := 1 to GetEnvironmentVariableCount do
-            Process.Environment.Add(GetEnvironmentString(idx));
-
-         Process.Executable := SMUtil;
-//         Process.Parameters.Add('--args');
-//         Process.Parameters.Add('-FBSD SEND EMAIL');
-//         Process.Parameters.Add('-P' + SMTPStr);
-
-         FLPMS_Main.Hide();
-         Process.Execute;
-         FLPMS_Main.Show();
-
-      finally
-         Process.Free;
-      end;
+   finally
+      Process.Free;
+   end;
 
 end;
 
@@ -1481,18 +1595,12 @@ const
    CURKEY           = 1;
    COMPCD           = 2;
    UNIQUE           = 3;
-//   LICTYPE_INVALID  = 0;
-//   LICTYPE_TRIAL    = 1;
-//   LICTYPE_PERSONAL = 2;
-//   LICTYPE_BROWSE   = 3;
-//   LICTYPE_GENERIC  = 4;
-
 
 var
    UserRenewals, UserXfer, UserNewLicense, Interval : integer;
    DaysLeft, idx1                                   : integer;
    UserBlocked, CompBlocked, Found                  : boolean;
-   UserUnique, UserExpiry, UserKey{, CompName}        : string;
+   UserUnique, UserExpiry, UserKey                  : string;
    UserNewPrefix, S1, S2, S3, S4, S5, S6            : string;
    This_Key_Priv                                    : REC_Key_Priv;
    This_Key_Info                                    : REC_Key_Values;
@@ -1578,7 +1686,6 @@ begin
    if SQLQry1.RecordCount = 1 then begin
 
       CompBlocked := SQLQry1.FieldByName('LPMSKey_Blocked').AsBoolean;
-//      CompName    := SQLQry1.FieldByName('LPMSKey_Name').AsString;
       Interval    := SQLQry1.FieldByName('LPMSKey_Interval').AsInteger;
 
    end else begin
