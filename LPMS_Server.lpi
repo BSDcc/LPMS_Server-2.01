@@ -21,8 +21,7 @@
           <Version Value="11"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <Libraries Value="../BSD_Utilities/lib/x86_64-linux/Release"/>
-            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -37,6 +36,8 @@
               <StackChecks Value="True"/>
             </Checks>
             <VerifyObjMethodCallValidity Value="True"/>
+            <TargetCPU Value="arm"/>
+            <TargetOS Value="linux"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -50,6 +51,11 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CompilerMessages>
+              <IgnoredMessages idx4105="True" idx4104="True"/>
+            </CompilerMessages>
+          </Other>
         </CompilerOptions>
       </Item2>
       <Item3 Name="Release">
@@ -57,13 +63,14 @@
           <Version Value="11"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <Libraries Value="../BSD_Utilities/lib/$(TargetCPU)-$(TargetOS)/Release"/>
-            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="arm"/>
+            <TargetOS Value="linux"/>
             <Optimizations>
-              <OptimizationLevel Value="3"/>
+              <OptimizationLevel Value="0"/>
             </Optimizations>
           </CodeGeneration>
           <Linking>
@@ -77,10 +84,15 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <ConfigFile>
+              <StopAfterErrCount Value="5"/>
+            </ConfigFile>
+          </Other>
         </CompilerOptions>
       </Item3>
       <SharedMatrixOptions Count="1">
-        <Item1 ID="043651141443" Modes="Default" Type="OutDir" Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
+        <Item1 ID="043651141443" Modes="Default,Debug,Release" Type="OutDir" Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -127,8 +139,7 @@
     <Version Value="11"/>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <Libraries Value="../BSD_Utilities/lib/$(TargetCPU)-$(TargetOS)/Release"/>
-      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
     </SearchPaths>
     <Linking>
       <Options>

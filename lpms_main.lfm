@@ -1,7 +1,7 @@
 object FLPMS_Main: TFLPMS_Main
-  Left = 560
+  Left = 550
   Height = 515
-  Top = 155
+  Top = 121
   Width = 868
   ActiveControl = pnlLog
   Caption = 'FLPMS_Main'
@@ -13,6 +13,207 @@ object FLPMS_Main: TFLPMS_Main
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '2.0.8.0'
+  object pnlLog: TPanel
+    Left = 0
+    Height = 460
+    Top = 34
+    Width = 868
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 460
+    ClientWidth = 868
+    TabOrder = 1
+    object Panel1: TPanel
+      Left = 0
+      Height = 40
+      Top = 0
+      Width = 868
+      Align = alTop
+      BevelOuter = bvNone
+      ClientHeight = 40
+      ClientWidth = 868
+      TabOrder = 0
+      object Label2: TLabel
+        Left = 12
+        Height = 17
+        Top = 12
+        Width = 63
+        Caption = 'Text to Find'
+        ParentColor = False
+      end
+      object btnFindNext: TSpeedButton
+        Left = 834
+        Height = 27
+        Top = 8
+        Width = 28
+        Anchors = [akTop, akRight]
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FF4A667C
+          BE9596FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0066
+          00006600FF00FFFF00FF6B9CC31E89E84B7AA3C89693FF00FFFF00FFFF00FFFF
+          00FFFF00FFFF00FFFF00FF0066001DAC3C14A329006600FF00FF4BB4FE51B5FF
+          2089E94B7AA2C69592FF00FFFF00FFFF00FFFF00FFFF00FF00660024A94431C9
+          6224BD4A15A429006600FF00FF51B7FE51B3FF1D87E64E7AA0CA9792FF00FFFF
+          00FFFF00FFFF00FF00660011831E39D16D31C96211831E006600FF00FFFF00FF
+          51B7FE4EB2FF1F89E64E7BA2B99497FF00FFFF00FFFF00FFFF00FF0066003DD1
+          6D32C460006600FF00FFFF00FFFF00FFFF00FF52B8FE4BB1FF2787D95F6A76FF
+          00FFFF00FF00660000660031B75248E07C148A25006600FF00FFFF00FFFF00FF
+          FF00FFFF00FF55BDFFB5D6EDBF9D92BB9B8C11831E32B14C45D16C40CB67188E
+          29006600FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFCEA795FD
+          EEBE006600006600006600006600006600E8DEDDB89086FF00FFFF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFC1A091FBDCA8FEF7D0FFFFDBFFFFE3FFFFF8FFFF
+          FDFFFFFDC6A99CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFC1A091FEE3ACF1
+          C491FCF2CAFFFFDDFFFFE4FFFFF7FFFFF7FFFFE9EEE5CBB9948CFF00FFFF00FF
+          FF00FFFF00FFFF00FFC2A191FFE6AEEEB581F7DCAEFEFDD8FFFFDFFFFFE3FFFF
+          E4FFFFE0F3ECD2BB968EFF00FFFF00FFFF00FFFF00FFFF00FFBC978CFBE7B7F4
+          C791F2C994F8E5B9FEFCD8FFFFDDFFFFDCFFFFE0E2D2BAB68E86FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFD9C3A9FFFEE5F7DCB8F2C994F5D4A5FAE8BDFDF4
+          C9FDFBD6B69089FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB58D85E8
+          DEDDFFFEF2F9D8A3F4C48CF9D49FFDEAB8D0B49FB89086FF00FFFF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFAD827FC9AA9EEFE0B7EFDFB2E7CEACB890
+          86B89086FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+          00FFFF00FFBA968ABB988CB79188FF00FFFF00FFFF00FFFF00FF
+        }
+        OnClick = btnFindNextClick
+      end
+      object btnFind: TSpeedButton
+        Left = 803
+        Height = 27
+        Top = 8
+        Width = 28
+        Anchors = [akTop, akRight]
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000120B0000120B00000000000000000000FF00FF4A667C
+          BE9596FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FF6B9CC31E89E84B7AA3C89693FF00FFFF00FFFF00FFFF
+          00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF4BB4FE51B5FF
+          2089E94B7AA2C69592FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFFF00FF51B7FE51B3FF1D87E64E7AA0CA9792FF00FFFF
+          00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+          51B7FE4EB2FF1F89E64E7BA2B99497FF00FFFF00FFFF00FFFF00FFFF00FFFF00
+          FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF52B8FE4BB1FF2787D95F6A76FF
+          00FFB0857FC09F94C09F96BC988EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+          FF00FFFF00FF55BDFFB5D6EDBF9D92BB9B8CE7DAC2FFFFE3FFFFE5FDFADAD8C3
+          B3B58D85FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFCEA795FD
+          EEBEFFFFD8FFFFDAFFFFDBFFFFE6FFFFFBEADDDCAE837FFF00FFFF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFC1A091FBDCA8FEF7D0FFFFDBFFFFE3FFFFF8FFFF
+          FDFFFFFDC6A99CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFC1A091FEE3ACF1
+          C491FCF2CAFFFFDDFFFFE4FFFFF7FFFFF7FFFFE9EEE5CBB9948CFF00FFFF00FF
+          FF00FFFF00FFFF00FFC2A191FFE6AEEEB581F7DCAEFEFDD8FFFFDFFFFFE3FFFF
+          E4FFFFE0F3ECD2BB968EFF00FFFF00FFFF00FFFF00FFFF00FFBC978CFBE7B7F4
+          C791F2C994F8E5B9FEFCD8FFFFDDFFFFDCFFFFE0E2D2BAB68E86FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFD9C3A9FFFEE5F7DCB8F2C994F5D4A5FAE8BDFDF4
+          C9FDFBD6B69089FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB58D85E8
+          DEDDFFFEF2F9D8A3F4C48CF9D49FFDEAB8D0B49FB89086FF00FFFF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFAD827FC9AA9EEFE0B7EFDFB2E7CEACB890
+          86B89086FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+          00FFFF00FFBA968ABB988CB79188FF00FFFF00FFFF00FFFF00FF
+        }
+        OnClick = btnFindClick
+      end
+      object edtFind: TEdit
+        Left = 89
+        Height = 27
+        Top = 8
+        Width = 708
+        Anchors = [akTop, akLeft, akRight]
+        TabOrder = 0
+      end
+    end
+    object Panel3: TPanel
+      Left = 0
+      Height = 38
+      Top = 422
+      Width = 868
+      Align = alBottom
+      BevelOuter = bvNone
+      ClientHeight = 38
+      ClientWidth = 868
+      TabOrder = 1
+      object btnMinimiseL: TButton
+        Left = 703
+        Height = 25
+        Top = 6
+        Width = 75
+        Action = ToolsMinimise
+        Anchors = [akTop, akRight]
+        TabOrder = 0
+      end
+      object btnExitL: TButton
+        Left = 784
+        Height = 25
+        Top = 6
+        Width = 75
+        Anchors = [akTop, akRight]
+        Caption = 'Exit'
+        OnClick = btnExitLClick
+        TabOrder = 1
+      end
+      object btnExport: TButton
+        Left = 622
+        Height = 25
+        Top = 6
+        Width = 75
+        Anchors = [akTop, akRight]
+        Caption = 'Export'
+        OnClick = btnExportClick
+        TabOrder = 2
+      end
+      object edtACMParm: TEditButton
+        Left = 12
+        Height = 27
+        Top = 5
+        Width = 548
+        Anchors = [akTop, akLeft, akRight]
+        ButtonWidth = 28
+        Images = imgList
+        ImageIndex = 9
+        MaxLength = 0
+        NumGlyphs = 1
+        OnButtonClick = UtilitiesACMExecute
+        PasswordChar = #0
+        TabOrder = 3
+      end
+    end
+    object Panel2: TPanel
+      Left = 0
+      Height = 382
+      Top = 40
+      Width = 868
+      Align = alClient
+      Caption = 'Panel2'
+      ClientHeight = 382
+      ClientWidth = 868
+      TabOrder = 2
+      object lvLog: TListView
+        Left = 1
+        Height = 380
+        Top = 1
+        Width = 866
+        Align = alClient
+        Columns = <        
+          item
+            Caption = 'Date'
+            Width = 80
+          end        
+          item
+            Caption = 'Time'
+            Width = 80
+          end        
+          item
+            AutoSize = True
+            Caption = 'Message'
+            Width = 689
+          end>
+        GridLines = True
+        TabOrder = 0
+        ViewStyle = vsReport
+        OnClick = lvLogClick
+      end
+    end
+  end
   object Bevel1: TBevel
     Left = 0
     Height = 2
@@ -312,7 +513,7 @@ object FLPMS_Main: TFLPMS_Main
       Width = 738
       Anchors = [akTop, akLeft, akRight]
       OnChange = edtHostChange
-      TabOrder = 0
+      TabOrder = 1
     end
     object edtVersion: TEdit
       Left = 120
@@ -320,7 +521,7 @@ object FLPMS_Main: TFLPMS_Main
       Top = 128
       Width = 121
       OnChange = edtHostChange
-      TabOrder = 2
+      TabOrder = 4
     end
     object edtSpecialMsg: TEdit
       Left = 120
@@ -329,7 +530,7 @@ object FLPMS_Main: TFLPMS_Main
       Width = 739
       Anchors = [akTop, akLeft, akRight]
       OnChange = edtHostChange
-      TabOrder = 3
+      TabOrder = 5
     end
     object chkActivate: TCheckBox
       Left = 120
@@ -338,7 +539,7 @@ object FLPMS_Main: TFLPMS_Main
       Width = 165
       Caption = 'Activate Special Message'
       OnChange = edtHostChange
-      TabOrder = 4
+      TabOrder = 6
     end
     object chkShowFind: TCheckBox
       Left = 120
@@ -347,7 +548,7 @@ object FLPMS_Main: TFLPMS_Main
       Width = 118
       Caption = 'Show Find Dialog'
       OnChange = edtHostChange
-      TabOrder = 1
+      TabOrder = 3
     end
     object edtHostname: TEdit
       Left = 120
@@ -356,7 +557,7 @@ object FLPMS_Main: TFLPMS_Main
       Width = 738
       Anchors = [akTop, akLeft, akRight]
       OnChange = edtHostChange
-      TabOrder = 7
+      TabOrder = 10
     end
     object edtUserID: TEdit
       Left = 120
@@ -364,7 +565,7 @@ object FLPMS_Main: TFLPMS_Main
       Top = 308
       Width = 121
       OnChange = edtHostChange
-      TabOrder = 8
+      TabOrder = 11
     end
     object edtPassword: TEdit
       Left = 376
@@ -374,7 +575,7 @@ object FLPMS_Main: TFLPMS_Main
       EchoMode = emPassword
       OnChange = edtHostChange
       PasswordChar = '*'
-      TabOrder = 9
+      TabOrder = 12
     end
     object edtSourceFile: TEdit
       Left = 120
@@ -383,7 +584,7 @@ object FLPMS_Main: TFLPMS_Main
       Width = 738
       Anchors = [akTop, akLeft, akRight]
       OnChange = edtHostChange
-      TabOrder = 10
+      TabOrder = 13
     end
     object edtDestFile: TEdit
       Left = 120
@@ -392,7 +593,7 @@ object FLPMS_Main: TFLPMS_Main
       Width = 738
       Anchors = [akTop, akLeft, akRight]
       OnChange = edtHostChange
-      TabOrder = 12
+      TabOrder = 14
     end
     object chkDownload: TCheckBox
       Left = 120
@@ -401,7 +602,7 @@ object FLPMS_Main: TFLPMS_Main
       Width = 127
       Caption = 'Activate Download'
       OnChange = edtHostChange
-      TabOrder = 14
+      TabOrder = 15
     end
     object cbType: TComboBox
       Left = 120
@@ -416,7 +617,7 @@ object FLPMS_Main: TFLPMS_Main
         'Fees'
       )
       OnChange = edtHostChange
-      TabOrder = 5
+      TabOrder = 7
       Text = '--- Select ---'
     end
     object btnMinimiseP: TButton
@@ -436,7 +637,7 @@ object FLPMS_Main: TFLPMS_Main
       Anchors = [akRight, akBottom]
       Caption = 'Exit'
       OnClick = btnExitLClick
-      TabOrder = 11
+      TabOrder = 18
     end
     object btnCancelP: TButton
       Left = 703
@@ -446,7 +647,7 @@ object FLPMS_Main: TFLPMS_Main
       Anchors = [akRight, akBottom]
       Caption = 'Cancel'
       OnClick = btnCancelPClick
-      TabOrder = 13
+      TabOrder = 19
     end
     object btnUpdateP: TButton
       Left = 784
@@ -456,7 +657,7 @@ object FLPMS_Main: TFLPMS_Main
       Anchors = [akRight, akBottom]
       Caption = 'Update'
       OnClick = btnUpdatePClick
-      TabOrder = 16
+      TabOrder = 20
     end
     object chkOverride: TCheckBox
       Left = 268
@@ -465,7 +666,7 @@ object FLPMS_Main: TFLPMS_Main
       Width = 154
       Caption = 'Override Version Check'
       OnChange = edtHostChange
-      TabOrder = 15
+      TabOrder = 16
     end
     object cbxLegend: TComboBox
       Left = 376
@@ -480,7 +681,7 @@ object FLPMS_Main: TFLPMS_Main
         'Import'
       )
       OnChange = edtHostChange
-      TabOrder = 6
+      TabOrder = 9
       Text = 'Update'
     end
     object spePort: TSpinEdit
@@ -490,7 +691,7 @@ object FLPMS_Main: TFLPMS_Main
       Width = 60
       MaxValue = 0
       OnChange = edtHostChange
-      TabOrder = 18
+      TabOrder = 0
       Value = 6001
     end
     object speSize: TSpinEdit
@@ -500,248 +701,21 @@ object FLPMS_Main: TFLPMS_Main
       Width = 90
       MaxValue = 0
       OnChange = edtHostChange
-      TabOrder = 19
+      TabOrder = 8
     end
-    object edtLogFile: TFileNameEdit
+    object edtLogFile: TDirectoryEdit
       Left = 120
       Height = 27
       Top = 68
       Width = 738
-      FilterIndex = 0
-      HideDirectories = False
-      ButtonWidth = 23
-      Glyph.Data = {
-        36030000424D3803000000000000360000002800000010000000100000000100
-        18000000000000000000120B0000120B00000000000000000000FF00FF0274AC
-        0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274AC0274
-        AC0274ACFF00FFFF00FF0274AC138AC457B7E06BCBF84BBFF74ABFF74ABFF74A
-        BFF74ABFF64ABFF74ABFF64BC0F72398CC0274ACFF00FFFF00FF0274AC33AAE0
-        2392C489D9FA54C7F854C7F753C7F854C7F754C7F854C7F854C7F853C7F7279D
-        CE6ACBE50274ACFF00FF0274AC57CAF80274AC99E3FB5ED1FA5ED1FA5ED1FA5E
-        D1FA5ED1FA5FD1FA5ED1F85ED1F82CA1CE99EDF70274ACFF00FF0274AC5ED3FA
-        0B81B782D5EF79E0FA6ADCFA69DCFB69DCFB6ADCFB69DCFB69DCFA6ADDFB2FA6
-        CF9FF0F70274ACFF00FF0274AC68DAFB2BA4D14AB2D797EBFC74E5FB74E5FB74
-        E5FC74E5FC74E5FB74E5FC046B0B33A9CFA3F4F752BBD70274AC0274AC70E3FB
-        5CD1EF1184B6FCFFFFB8F4FEBAF4FEBAF4FEBAF4FEB8F4FE046B0B25AA42046B
-        0BD4F7FACAF3F70274AC0274AC7AEBFE7AEBFC0A7FB50274AC0274AC0274AC02
-        74AC0274AC046B0B38CE6547E77F29B44A046B0B0274AC0274AC0274AC83F2FE
-        82F3FE82F3FE83F2FC83F3FE82F3FE83F2FE046B0B2DC0513FDC6E3ED86E46E5
-        7B28B04A046B0BFF00FF0274ACFEFEFE89FAFF89FAFE89FAFE8AF8FE8AFAFE04
-        6B0B046B0B046B0B046B0B3CD86A2EBF53046B0B046B0B046B0BFF00FF0274AC
-        FEFEFE8FFEFF8FFEFF8FFEFF0273A32BA4D12BA4D12BA4D1046B0B35D35E20A7
-        3A046B0BFF00FFFF00FFFF00FFFF00FF0274AC0274AC0274AC0274ACFF00FFFF
-        00FFFF00FFFF00FF046B0B28C24A046B0BFF00FFFF00FFFF00FFFF00FFFF00FF
-        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF046B0B17A42B19A730046B
-        0BFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-        00FFFF00FF046B0B11A122046B0BFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-        FF00FFFF00FFFF00FFFF00FFFF00FF046B0B046B0B046B0B046B0BFF00FFFF00
-        FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF046B0B046B0B04
-        6B0B046B0BFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-      }
+      OnAcceptDirectory = edtLogFileAcceptDirectory
+      ShowHidden = False
+      ButtonWidth = 28
       NumGlyphs = 1
       Anchors = [akTop, akLeft, akRight]
       MaxLength = 0
-      TabOrder = 20
-      OnButtonClick = edtLogFileButtonClick
-      OnChange = edtLogFileChange
-    end
-  end
-  object pnlLog: TPanel
-    Left = 0
-    Height = 460
-    Top = 34
-    Width = 868
-    Align = alClient
-    BevelOuter = bvNone
-    ClientHeight = 460
-    ClientWidth = 868
-    TabOrder = 1
-    object Panel1: TPanel
-      Left = 0
-      Height = 40
-      Top = 0
-      Width = 868
-      Align = alTop
-      BevelOuter = bvNone
-      ClientHeight = 40
-      ClientWidth = 868
-      TabOrder = 0
-      object Label2: TLabel
-        Left = 12
-        Height = 17
-        Top = 12
-        Width = 63
-        Caption = 'Text to Find'
-        ParentColor = False
-      end
-      object btnFindNext: TSpeedButton
-        Left = 834
-        Height = 27
-        Top = 8
-        Width = 28
-        Anchors = [akTop, akRight]
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          18000000000000030000120B0000120B00000000000000000000FF00FF4A667C
-          BE9596FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0066
-          00006600FF00FFFF00FF6B9CC31E89E84B7AA3C89693FF00FFFF00FFFF00FFFF
-          00FFFF00FFFF00FFFF00FF0066001DAC3C14A329006600FF00FF4BB4FE51B5FF
-          2089E94B7AA2C69592FF00FFFF00FFFF00FFFF00FFFF00FF00660024A94431C9
-          6224BD4A15A429006600FF00FF51B7FE51B3FF1D87E64E7AA0CA9792FF00FFFF
-          00FFFF00FFFF00FF00660011831E39D16D31C96211831E006600FF00FFFF00FF
-          51B7FE4EB2FF1F89E64E7BA2B99497FF00FFFF00FFFF00FFFF00FF0066003DD1
-          6D32C460006600FF00FFFF00FFFF00FFFF00FF52B8FE4BB1FF2787D95F6A76FF
-          00FFFF00FF00660000660031B75248E07C148A25006600FF00FFFF00FFFF00FF
-          FF00FFFF00FF55BDFFB5D6EDBF9D92BB9B8C11831E32B14C45D16C40CB67188E
-          29006600FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFCEA795FD
-          EEBE006600006600006600006600006600E8DEDDB89086FF00FFFF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFC1A091FBDCA8FEF7D0FFFFDBFFFFE3FFFFF8FFFF
-          FDFFFFFDC6A99CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFC1A091FEE3ACF1
-          C491FCF2CAFFFFDDFFFFE4FFFFF7FFFFF7FFFFE9EEE5CBB9948CFF00FFFF00FF
-          FF00FFFF00FFFF00FFC2A191FFE6AEEEB581F7DCAEFEFDD8FFFFDFFFFFE3FFFF
-          E4FFFFE0F3ECD2BB968EFF00FFFF00FFFF00FFFF00FFFF00FFBC978CFBE7B7F4
-          C791F2C994F8E5B9FEFCD8FFFFDDFFFFDCFFFFE0E2D2BAB68E86FF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFD9C3A9FFFEE5F7DCB8F2C994F5D4A5FAE8BDFDF4
-          C9FDFBD6B69089FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB58D85E8
-          DEDDFFFEF2F9D8A3F4C48CF9D49FFDEAB8D0B49FB89086FF00FFFF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFAD827FC9AA9EEFE0B7EFDFB2E7CEACB890
-          86B89086FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-          00FFFF00FFBA968ABB988CB79188FF00FFFF00FFFF00FFFF00FF
-        }
-      end
-      object btnFind: TSpeedButton
-        Left = 803
-        Height = 27
-        Top = 8
-        Width = 28
-        Anchors = [akTop, akRight]
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          18000000000000030000120B0000120B00000000000000000000FF00FF4A667C
-          BE9596FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FF6B9CC31E89E84B7AA3C89693FF00FFFF00FFFF00FFFF
-          00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF4BB4FE51B5FF
-          2089E94B7AA2C69592FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FFFF00FF51B7FE51B3FF1D87E64E7AA0CA9792FF00FFFF
-          00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-          51B7FE4EB2FF1F89E64E7BA2B99497FF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF52B8FE4BB1FF2787D95F6A76FF
-          00FFB0857FC09F94C09F96BC988EFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-          FF00FFFF00FF55BDFFB5D6EDBF9D92BB9B8CE7DAC2FFFFE3FFFFE5FDFADAD8C3
-          B3B58D85FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFCEA795FD
-          EEBEFFFFD8FFFFDAFFFFDBFFFFE6FFFFFBEADDDCAE837FFF00FFFF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFC1A091FBDCA8FEF7D0FFFFDBFFFFE3FFFFF8FFFF
-          FDFFFFFDC6A99CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFC1A091FEE3ACF1
-          C491FCF2CAFFFFDDFFFFE4FFFFF7FFFFF7FFFFE9EEE5CBB9948CFF00FFFF00FF
-          FF00FFFF00FFFF00FFC2A191FFE6AEEEB581F7DCAEFEFDD8FFFFDFFFFFE3FFFF
-          E4FFFFE0F3ECD2BB968EFF00FFFF00FFFF00FFFF00FFFF00FFBC978CFBE7B7F4
-          C791F2C994F8E5B9FEFCD8FFFFDDFFFFDCFFFFE0E2D2BAB68E86FF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFD9C3A9FFFEE5F7DCB8F2C994F5D4A5FAE8BDFDF4
-          C9FDFBD6B69089FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB58D85E8
-          DEDDFFFEF2F9D8A3F4C48CF9D49FFDEAB8D0B49FB89086FF00FFFF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFAD827FC9AA9EEFE0B7EFDFB2E7CEACB890
-          86B89086FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-          00FFFF00FFBA968ABB988CB79188FF00FFFF00FFFF00FFFF00FF
-        }
-      end
-      object edtFind: TEdit
-        Left = 89
-        Height = 27
-        Top = 8
-        Width = 708
-        Anchors = [akTop, akLeft, akRight]
-        TabOrder = 0
-      end
-    end
-    object Panel3: TPanel
-      Left = 0
-      Height = 38
-      Top = 422
-      Width = 868
-      Align = alBottom
-      BevelOuter = bvNone
-      ClientHeight = 38
-      ClientWidth = 868
-      TabOrder = 1
-      object btnMinimiseL: TButton
-        Left = 703
-        Height = 25
-        Top = 6
-        Width = 75
-        Action = ToolsMinimise
-        Anchors = [akTop, akRight]
-        TabOrder = 0
-      end
-      object btnExitL: TButton
-        Left = 784
-        Height = 25
-        Top = 6
-        Width = 75
-        Anchors = [akTop, akRight]
-        Caption = 'Exit'
-        OnClick = btnExitLClick
-        TabOrder = 1
-      end
-      object btnExport: TButton
-        Left = 622
-        Height = 25
-        Top = 6
-        Width = 75
-        Anchors = [akTop, akRight]
-        Caption = 'Export'
-        TabOrder = 2
-      end
-      object edtACMParm: TEditButton
-        Left = 12
-        Height = 27
-        Top = 5
-        Width = 548
-        Anchors = [akTop, akLeft, akRight]
-        ButtonWidth = 28
-        Images = imgList
-        ImageIndex = 9
-        MaxLength = 0
-        NumGlyphs = 1
-        OnButtonClick = UtilitiesACMExecute
-        PasswordChar = #0
-        TabOrder = 3
-      end
-    end
-    object Panel2: TPanel
-      Left = 0
-      Height = 382
-      Top = 40
-      Width = 868
-      Align = alClient
-      Caption = 'Panel2'
-      ClientHeight = 382
-      ClientWidth = 868
       TabOrder = 2
-      object lvLog: TListView
-        Left = 1
-        Height = 380
-        Top = 1
-        Width = 866
-        Align = alClient
-        Columns = <        
-          item
-            Caption = 'Date'
-            Width = 80
-          end        
-          item
-            Caption = 'Time'
-            Width = 80
-          end        
-          item
-            AutoSize = True
-            Caption = 'Message'
-            Width = 689
-          end>
-        GridLines = True
-        TabOrder = 0
-        ViewStyle = vsReport
-        OnClick = lvLogClick
-      end
+      OnButtonClick = edtLogFileButtonClick
     end
   end
   object actList: TActionList
@@ -818,6 +792,7 @@ object FLPMS_Main: TFLPMS_Main
   end
   object dlgFind: TFindDialog
     Options = [frDown, frHideWholeWord]
+    OnFind = btnFindNextClick
     left = 468
     top = 40
   end
