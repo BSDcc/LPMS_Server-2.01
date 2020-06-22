@@ -535,6 +535,8 @@ begin
 
    LocalPath := AppendPathDelim(LocalPath + 'LPMS_Server');
 
+   LogName   := 'LPMS_Server Log.txt';
+
 {$ELSE}
 
    LocalPath := AppendPathDelim(GetUSerDir);
