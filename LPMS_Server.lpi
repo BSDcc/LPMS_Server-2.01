@@ -21,6 +21,7 @@
           <Version Value="11"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../BSD_Utilities"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -61,6 +62,7 @@
           <Version Value="11"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../BSD_Utilities"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -99,24 +101,27 @@
       <FormatVersion Value="2"/>
       <Modes Count="0"/>
     </RunParams>
-    <RequiredPackages Count="5">
+    <RequiredPackages Count="6">
       <Item1>
-        <PackageName Value="lazdbexport"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item1>
       <Item2>
-        <PackageName Value="splashabout"/>
+        <PackageName Value="lazdbexport"/>
       </Item2>
       <Item3>
-        <PackageName Value="FCL"/>
+        <PackageName Value="splashabout"/>
       </Item3>
       <Item4>
-        <PackageName Value="indylaz"/>
+        <PackageName Value="FCL"/>
       </Item4>
       <Item5>
-        <PackageName Value="LCL"/>
+        <PackageName Value="indylaz"/>
       </Item5>
+      <Item6>
+        <PackageName Value="LCL"/>
+      </Item6>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="3">
       <Unit0>
         <Filename Value="LPMS_Server.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -129,12 +134,21 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="../BSD_Utilities/lpms_inputquery.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FLPMS_InputQuery"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="LPMS_InputQuery"/>
+      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../BSD_Utilities"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
     </SearchPaths>
     <Linking>

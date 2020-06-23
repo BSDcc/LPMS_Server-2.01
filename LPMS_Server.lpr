@@ -10,7 +10,7 @@ uses
   cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, lazdbexport, LPMS_Main, indylaz
+  Forms, lazdbexport, datetimectrls, LPMS_Main, LPMS_InputQuery, indylaz
   { you can add units after this };
 
 {$R *.res}

@@ -395,6 +395,8 @@ private  { Private Declarations }
 
 public   { Public Declarations }
 
+   StartDate, EndDate : string;
+
 end;
 
 //------------------------------------------------------------------------------
@@ -435,6 +437,8 @@ var
    FLPMS_Main: TFLPMS_Main;
 
 implementation
+
+   uses LPMS_InputQuery;
 
 {$R *.lfm}
 
@@ -535,16 +539,14 @@ begin
 
    LocalPath := AppendPathDelim(LocalPath + 'LPMS_Server');
 
-   LogName   := 'LPMS_Server Log.txt';
-
 {$ELSE}
 
    LocalPath := AppendPathDelim(GetUSerDir);
    LocalPath := AppendPathDelim(LocalPath + '.lpms_server');
 
-   LogName   := 'LPMS_Server Log.txt';
-
 {$ENDIF}
+
+   LogName   := 'LPMS_Server Log.txt';
 
 //--- We now have what passes for a home directory with the working directory
 //--- Backup Manager added to it and tests whether this exists. If it does not
@@ -572,7 +574,7 @@ begin
 
 //--- Set the Encode/Decode key
 
-   SecretPhrase := 'Blue Crane Software Development CC';
+   SecretPhrase := 'BLUECRANE SOFTWARE DEVELOPMENT CC';
    ThisEmail    := 'registration@bluecrane.cc';
 
 //--- Get the default values stored in the Registry
@@ -798,7 +800,35 @@ end;
 procedure TFLPMS_Main.btnExportClick(Sender: TObject);
 begin
 
-   Application.MessageBox('Export function not yet implemented','LPMS Server',(MB_OK + MB_ICONINFORMATION));
+   StartDate := '';
+   EndDate   := '';
+
+   FLPMS_InputQuery := TFLPMS_InputQuery.Create(Application);
+
+   FLPMS_InputQuery.Caption            := 'LPMS SERVER';
+   FLPMS_InputQuery.dtpStart.Date      := StrToDate(lvLog.Items.Item[0].Caption);
+   FLPMS_InputQuery.dtpEnd.Date        := StrToDate(lvLog.Items.Item[0].Caption);
+   FLPMS_InputQuery.lblCaption.Caption := 'Specify Start and End Date for Export:';
+
+   FLPMS_Main.Hide();
+   FLPMS_InputQuery.ShowModal();
+   FLPMS_Main.Show();
+
+   FLPMS_InputQuery.Destroy;
+
+//--- If StartDate is empty then User clicked on Cancel
+
+   if Trim(StartDate) = '' then
+      Exit;
+
+//--- If we have a valid date range then we can proceed to do the export
+
+   if EndDate < StartDate then begin
+
+     Application.MessageBox('Selected Date range is invalid','LPMS Server',(MB_OK + MB_ICONSTOP));
+     Exit;
+
+   end;
 
 end;
 
@@ -2049,7 +2079,6 @@ var
 begin
 
    lvLog.Clear;
-   AssignFile(LogFile,FileName);
 
 //--- Check whether the log file exits and create it if it does not
 
@@ -2061,6 +2090,7 @@ begin
 
    end;
 
+   AssignFile(LogFile,FileName);
    Reset(LogFile);
 
    While eof(LogFile) = False do begin
@@ -2475,15 +2505,14 @@ var
 
 begin
 
-//--- Remove all characters that do not fall within [A..Z] and [a..z] and
-//--- convert to upper case only
+//--- Remove all characters that do not fall within [A..Z] and [a..z]
 
    TempKey := '';
 
    for idx1 := 1 to Length(Key) do begin
 
       if ((InRange(Ord(Key[idx1]), OrdBigA, OrdBigZ)) or (InRange(Ord(Key[idx1]), OrdSmlA, OrdSmlZ))) = True then
-         TempKey := TempKey + ToUpper(Key[idx1]);
+         TempKey := TempKey + Key[idx1];
 
    end;
 
