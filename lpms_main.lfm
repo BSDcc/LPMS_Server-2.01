@@ -516,6 +516,15 @@ object FLPMS_Main: TFLPMS_Main
       TabOrder = 2
       OnButtonClick = edtLogFileButtonClick
     end
+    object chkMaintenance: TCheckBox
+      Left = 268
+      Height = 21
+      Top = 96
+      Width = 131
+      Caption = 'Maintenance Mode'
+      OnChange = chkMaintenanceChange
+      TabOrder = 21
+    end
   end
   object pnlLog: TPanel
     Left = 0
@@ -797,9 +806,8 @@ object FLPMS_Main: TFLPMS_Main
     top = 40
   end
   object dlgOpen: TOpenDialog
-    DefaultExt = '.txt'
-    Filter = 'Text Files (*.txt)|*.txt|Application Files (*.exe)|*.exe|All Files (*.*)|*.*'
-    Options = [ofHideReadOnly, ofPathMustExist, ofCreatePrompt, ofEnableSizing]
+    FilterIndex = 0
+    Options = [ofOverwritePrompt, ofOldStyleDialog, ofEnableSizing, ofViewDetail]
     left = 704
     top = 40
   end
@@ -3385,7 +3393,7 @@ object FLPMS_Main: TFLPMS_Main
     Images = imgList
     left = 564
     top = 92
-    object File1: TMenuItem
+    object FileMnu: TMenuItem
       Caption = 'File'
       object Exit2: TMenuItem
         Action = FileExit

@@ -58,6 +58,7 @@ type
     About1: TMenuItem;
     About2: TMenuItem;
     AboutLegalDiary1: TMenuItem;
+    chkMaintenance: TCheckBox;
     edtLogFile: TDirectoryEdit;
     edtACMParm: TEditButton;
     MenuItem2: TMenuItem;
@@ -107,7 +108,7 @@ type
     edtVersion: TEdit;
     Exit2: TMenuItem;
     ExitLPMSServer: TMenuItem;
-    File1: TMenuItem;
+    FileMnu: TMenuItem;
     FileExit: TAction;
     Help1: TMenuItem;
     Help2: TMenuItem;
@@ -176,6 +177,7 @@ type
     procedure btnFindNextClick(Sender: TObject);
     procedure btnSizeClick(Sender: TObject);
     procedure btnUpdatePClick(Sender: TObject);
+    procedure chkMaintenanceChange(Sender: TObject);
     procedure edtHostChange(Sender: TObject);
     procedure edtLogFileAcceptDirectory(Sender: TObject; var Value: String);
     procedure edtLogFileButtonClick(Sender: TObject);
@@ -546,7 +548,7 @@ begin
 
 {$ENDIF}
 
-   LogName   := 'LPMS_Server Log.txt';
+   LogName   := 'LPMS_Server Log.log';
 
 //--- We now have what passes for a home directory with the working directory
 //--- Backup Manager added to it and tests whether this exists. If it does not
@@ -798,7 +800,16 @@ end;
 // User clicked on the Export button
 //---------------------------------------------------------------------------
 procedure TFLPMS_Main.btnExportClick(Sender: TObject);
+var
+   Seq                         : integer = 0;
+   Loop                        : boolean = True;
+   ThisLog, ThisPath, ThisLine : string;
+   Templog                     : string = '$$Temp.log';
+   File1, File2, File3         : TextFile;
+
 begin
+
+//--- Get the date range for the export
 
    StartDate := '';
    EndDate   := '';
@@ -829,6 +840,72 @@ begin
      Exit;
 
    end;
+
+//--- If we get here then we have a valid date range. Set the name of the
+//--- exported LogFile
+
+   ThisPath := AppendPathDelim(ExtractFilePath(LogPath));
+
+   While Loop = True do begin
+
+      Inc(Seq);
+      ThisLog := ThisPath + FormatDateTime('yyyyMMdd',Now()) +
+                 ' - LPMS_Server Log Export' + IntToStr(Seq) + '.log';
+
+      Loop := FileExists(ThisLog);
+
+   end;
+
+//--- Put the Server in Maintenance Mode while we work on the Logs
+
+   chkMaintenance.Checked := True;
+   SavePath := LogPath;
+
+//--- Split the current log into two parts with ThisLog containing the records
+//--- that are exported and TempLog containing the records that must remain
+
+   AssignFile(File1,LogPath);
+   Reset(File1);
+
+   AssignFile(File2,ThisLog);
+   ReWrite(File2);
+
+   AssignFile(File3,ThisPath + TempLog);
+   ReWrite(File3);
+
+   While eof(File1) = False do begin
+
+      ReadLn(File1,ThisLine);
+
+      if Copy(ThisLine,1,10) < StartDate then
+         WriteLn(File3,ThisLine)
+      else if Copy(ThisLine,1,10) > EndDate then
+         WriteLn(File3,ThisLine)
+      else
+         WriteLn(File2,ThisLine);
+
+   end;
+
+   CloseFile(File1);
+   CloseFile(File2);
+   CloseFile(File3);
+
+//--- Delete the exiting log file and rename the temporary file that now
+//--- contains only the records that are not in the export range to be the
+//--- current log file
+
+   DeleteFile(LogPath);
+   RenameFile(ThisPath + TempLog,LogPath);
+
+//--- Reopen the Log file
+
+   OpenLog(LogPath);
+
+//--- Put the server back in production mode
+
+   chkMaintenance.Checked := False;
+
+   Application.MessageBox(PChar('Log Export for data range ' + StartDate + ' to ' + EndDate + ' completed.'),'LPMS Server',(MB_OK + MB_ICONINFORMATION));
 
 end;
 
@@ -1092,6 +1169,19 @@ begin
 
 end;
 
+//------------------------------------------------------------------------------
+// Maintenance Mode has been acivated/deactivated
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.chkMaintenanceChange(Sender: TObject);
+begin
+
+   if chkMaintenance.Checked = True then
+      DispLogMsg('*** Warning: LPMS_Sever is in MAINTENANCE MODE')
+   else
+      DispLogMsg('*** LPMS_Server is no longer in Maintenance Mode');
+
+end;
+
 //---------------------------------------------------------------------------
 // User clicked on the open file button embedded in edtLogFile
 //---------------------------------------------------------------------------
@@ -1241,6 +1331,18 @@ var
 begin
 
    Request := AContext.Connection.IOHandler.ReadLn();
+
+//--- Cheek whether the Server is in Maintenance Mode and if so then send a
+//--- message to the calling proram to try again later
+
+   if chkMaintenance.Checked = True then begin
+
+      AContext.Connection.IOHandler.WriteLn('LPMS Server is in Maintenance Mode - Please retry in a few minutes');
+      DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Request rejected due to LPMS Server being in Maintenance Mode');
+      AContext.Connection.Disconnect();
+      Exit;
+
+   end;
 
    if Request = 'LPMS Server Request' then begin
 
@@ -2098,8 +2200,6 @@ begin
       ReadLn(LogFile,ThisLine);
 
       try
-
-//         LogList := TStringList.Create;
 
          LogList := Disassemble(ThisLine,TYPE_PLAIN);
          DispLogMsg(LogList.Strings[0],LogList.Strings[1],LogList.Strings[2]);
