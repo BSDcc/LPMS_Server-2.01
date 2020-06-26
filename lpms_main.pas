@@ -60,6 +60,7 @@ type
     AboutLegalDiary1: TMenuItem;
     Bevel9: TBevel;
     chkMaintenance: TCheckBox;
+    edtACMPort: TEdit;
     edtLogFile: TDirectoryEdit;
     edtACMParm: TEditButton;
     edtACMHost: TEdit;
@@ -68,6 +69,7 @@ type
     Label26: TLabel;
     Label27: TLabel;
     Label28: TLabel;
+    Label29: TLabel;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
@@ -340,6 +342,7 @@ private  { Private Declarations }
    ACMUserID        : string;       // Holds the name of the LPMS_ACM UserID
    ACMPassword      : string;       // Holds the name of the LPMS_ACM Password
    ACMHost          : string;       // Holds the name of the LPMS_ACM Host
+   ACMPort          : string;       // Holds the name of the LPMS_ACM Port
    Backup           : string;       // Holds the name of the LPMS_Backup program
    CurrVersion      : string;       // Holds the latest version of LPMS
    DestFile         : string;       // Name under which the Execuable/FeesBundle will be stored after download
@@ -622,6 +625,7 @@ begin
    ACMUserID      := RegIni.ReadString('Preferences','ACMUserID','');
    ACMPassword    := Vignere(CYPHER_DEC,RegIni.ReadString('Preferences','ACMPassword',''),SecretPhrase);
    ACMHost        := RegIni.ReadString('Preferences','ACMHost','');
+   ACMPort        := RegIni.ReadString('Preferences','ACMPort','');
 
    RegIni.Destroy;
 
@@ -723,6 +727,7 @@ begin
    edtACMUserID.Text   := ACMUserID;
    edtACMPassword.Text := ACMPassword;
    edtACMHost.Text     := ACMHost;
+   edtACMPort.Text     := ACMPort;
 
    FLPMS_Main.Caption := 'Legal Practise Management System - Server';
    trIcon.Visible     := True;
@@ -1053,6 +1058,7 @@ begin
    ACMUserID      := edtACMUserID.Text;
    ACMPassword    := edtACMPassword.Text;
    ACMHost        := edtACMHost.Text;
+   ACMPort        := edtACMPort.Text;
 
    ServerHost := edtHost.Text;
    ServerPort := spePort.Value;
@@ -1093,6 +1099,7 @@ begin
    RegIni.WriteString('Preferences','ACMUserID',edtACMUserID.Text);
    RegIni.WriteString('Preferences','ACMPassword',Vignere(CYPHER_ENC,ACMPassword,SecretPhrase));
    RegIni.WriteString('Preferences','ACMHost',edtACMHost.Text);
+   RegIni.WriteString('Preferences','ACMPort',edtACMPort.Text);
 
 
    RegIni.Destroy;
@@ -1130,6 +1137,7 @@ begin
    edtACMUserID.Text   := ACMUserID;
    edtACMPassword.Text := ACMPassword;
    edtACMHost.Text     := ACMHost;
+   edtACMPort.Text     := ACMPort;
 
    edtHost.Text    := ServerHost;
    spePort.Value   := ServerPort;
@@ -1765,6 +1773,7 @@ begin
             Process.Parameters.Add('-u' + ACMUserID);
             Process.Parameters.Add('-p' + ACMPassword);
             Process.Parameters.Add('-K' + edtACMParm.Text);
+            Process.Parameters.Add('-P' + ACMPort);
 
          end;
 
