@@ -20,10 +20,10 @@ interface
 // Uses clause
 //------------------------------------------------------------------------------
 uses
-  Classes, SysUtils, sqldb, fpstdexports, mssqlconn, Forms, Controls, Graphics,
-  Dialogs, ExtCtrls, StdCtrls, Buttons, ComCtrls, ActnList, Menus, Spin,
-  EditBtn, IdTCPServer, LazFileUtils, usplashabout, IdContext, Process,
-  StrUtils, Character, Math, LCLType, DateUtils,
+  Classes, SysUtils, sqldb, fpstdexports, Forms, Controls, Graphics, Dialogs,
+  ExtCtrls, StdCtrls, Buttons, ComCtrls, ActnList, Menus, Spin, EditBtn,
+  IdTCPServer, LazFileUtils, usplashabout, IdContext, Process, StrUtils,
+  Character, Math, LCLType, DateUtils,
 
 {$IFDEF WINDOWS}                     // Target is Winblows
    Registry, mysql56conn;
@@ -39,11 +39,11 @@ uses
 {$ENDIF}
 
 {$IFDEF DARWIN}                      // Target is macOS
-   IniFiles, Zipper, DateUtils, SMTPSend, MimeMess, MimePart, SynaUtil,
+   IniFiles,
   {$IFDEF CPUI386}                   // Running on old hardware i.e. i386 - Widget set must be Carbon
-      mysql55conn, Interfaces;
+      mysql55conn;
    {$ELSE}                           // Running on x86_64 - Widget set must be Cocoa
-      mysql57conn, Interfaces;
+      mysql57conn;
    {$ENDIF}
 {$ENDIF}
 
@@ -58,9 +58,16 @@ type
     About1: TMenuItem;
     About2: TMenuItem;
     AboutLegalDiary1: TMenuItem;
+    Bevel9: TBevel;
     chkMaintenance: TCheckBox;
     edtLogFile: TDirectoryEdit;
     edtACMParm: TEditButton;
+    edtACMHost: TEdit;
+    edtACMUserID: TEdit;
+    edtACMPassword: TEdit;
+    Label26: TLabel;
+    Label27: TLabel;
+    Label28: TLabel;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
@@ -330,6 +337,9 @@ private  { Private Declarations }
    ShowFindDlg      : boolean;      // If set then find is driven from the system's Find dialog otherwise using the search and search again buttons
    SpecialActive    : boolean;      // If set then a message is dislayed when a version check is done instead of allowing a download
    Access           : string;       // Holds the name of the LPMS_ACM program
+   ACMUserID        : string;       // Holds the name of the LPMS_ACM UserID
+   ACMPassword      : string;       // Holds the name of the LPMS_ACM Password
+   ACMHost          : string;       // Holds the name of the LPMS_ACM Host
    Backup           : string;       // Holds the name of the LPMS_Backup program
    CurrVersion      : string;       // Holds the latest version of LPMS
    DestFile         : string;       // Name under which the Execuable/FeesBundle will be stored after download
@@ -436,7 +446,8 @@ const
    TYPE_LOAD          = 2;
 
 var
-   FLPMS_Main: TFLPMS_Main;
+   FLPMS_Main : TFLPMS_Main;
+   AlreadyRun : boolean = False;
 
 implementation
 
@@ -608,6 +619,9 @@ begin
    SendMail       := RegIni.ReadString('Preferences','SendMailExe','BSD_SendEmail');
    Backup         := RegIni.ReadString('Preferences','BackupExe','LPMS_Backup');
    Access         := RegIni.ReadString('Preferences','ACMExe','LPMS_ACM');
+   ACMUserID      := RegIni.ReadString('Preferences','ACMUserID','');
+   ACMPassword    := Vignere(CYPHER_DEC,RegIni.ReadString('Preferences','ACMPassword',''),SecretPhrase);
+   ACMHost        := RegIni.ReadString('Preferences','ACMHost','');
 
    RegIni.Destroy;
 
@@ -642,6 +656,11 @@ var
    MyRect  : TRect;
 
 begin
+
+   if AlreadyRun = True then
+      Exit
+   else
+      AlreadyRun := True;
 
    MyRect := FLPMS_Main.BoundsRect;
 
@@ -701,6 +720,9 @@ begin
    edtSourceFile.Text  := SourceFile;
    chkDownload.Checked := DownloadActive;
    chkOverride.Checked := OverrideChk;
+   edtACMUserID.Text   := ACMUserID;
+   edtACMPassword.Text := ACMPassword;
+   edtACMHost.Text     := ACMHost;
 
    FLPMS_Main.Caption := 'Legal Practise Management System - Server';
    trIcon.Visible     := True;
@@ -1022,11 +1044,15 @@ begin
    ButtonLegend   := cbxLegend.ItemIndex;
    DownloadHost   := edtHostname.Text;
    UserID         := edtUserID.Text;
-   Password       := Vignere(CYPHER_ENC, edtPassword.Text, SecretPhrase);
+//   Password       := Vignere(CYPHER_ENC, edtPassword.Text, SecretPhrase);
+   Password       := edtPassword.Text;
    DestFile       := edtDestFile.Text;
    SourceFile     := edtSourceFile.Text;
    DownloadActive := chkDownload.Checked;
    OverrideChk    := chkOverride.Checked;
+   ACMUserID      := edtACMUserID.Text;
+   ACMPassword    := edtACMPassword.Text;
+   ACMHost        := edtACMHost.Text;
 
    ServerHost := edtHost.Text;
    ServerPort := spePort.Value;
@@ -1059,11 +1085,15 @@ begin
    RegIni.WriteString('Preferences','SpecialMsg',SpecialMsg);
    RegIni.WriteString('Preferences','DownloadHost',DownloadHost);
    RegIni.WriteString('Preferences','UserID',UserID);
-   RegIni.WriteString('Preferences','Password',Password);
+   RegIni.WriteString('Preferences','Password',Vignere(CYPHER_ENC,Password,SecretPhrase));
    RegIni.WriteString('Preferences','DestFile',DestFile);
    RegIni.WriteString('Preferences','SourceFile',SourceFile);
    RegIni.WriteString('Preferences','ServerHost',ServerHost);
    RegIni.WriteString('Preferences','LogPath',edtLogFile.Text);
+   RegIni.WriteString('Preferences','ACMUserID',edtACMUserID.Text);
+   RegIni.WriteString('Preferences','ACMPassword',Vignere(CYPHER_ENC,ACMPassword,SecretPhrase));
+   RegIni.WriteString('Preferences','ACMHost',edtACMHost.Text);
+
 
    RegIni.Destroy;
 
@@ -1097,6 +1127,9 @@ begin
    edtSourceFile.Text  := SourceFile;
    chkDownload.Checked := DownloadActive;
    chkOverride.Checked := OverrideChk;
+   edtACMUserID.Text   := ACMUserID;
+   edtACMPassword.Text := ACMPassword;
+   edtACMHost.Text     := ACMHost;
 
    edtHost.Text    := ServerHost;
    spePort.Value   := ServerPort;
@@ -1728,9 +1761,9 @@ begin
          EXTERN_ACM: begin
 
             Process.Parameters.Add('--args');
-            Process.Parameters.Add('-H' + ServerHost);
-            Process.Parameters.Add('-uLPMSAdmin');
-            Process.Parameters.Add('-pLA01');
+            Process.Parameters.Add('-H' + ACMHost);
+            Process.Parameters.Add('-u' + ACMUserID);
+            Process.Parameters.Add('-p' + ACMPassword);
             Process.Parameters.Add('-K' + edtACMParm.Text);
 
          end;
