@@ -363,6 +363,8 @@ private  { Private Declarations }
    ServerHost       : string;       // Holds the name of the host that contains the lpmsdefault database
    SourceFile       : string;       // Name of the Executable/FeesBundle that will be downloaded from the FTP server
    SpecialMsg       : string;       // Text of the a message tat will be displayed if a version check is done and SpecialActive is True
+   SQLAddress       : string;       // Bind Address of the Server we are connecting to
+   SQLVersion       : string;       // Version of the Server we are connecting to
    ThisEmail        : string;       // Default email used as the contact detail in information messages and passed to BSD_SendEmail as the 'From' parameter
    ThreadNum        : string;       // tcpServer allocted threadnum for the active conversation
    UserID           : string;       // User ID for the FTP server
@@ -401,6 +403,7 @@ private  { Private Declarations }
    procedure FindTextString();
    function  GetHost() : string;
    function  GetIP() : string;
+   procedure GetInfo();
    function  Assemble(List: TStringList; ThisType: integer) : string;
    function  Disassemble(Str: string; ThisType: integer) : TStringList;
    function  Vignere(ThisType: integer; Phrase: string; const Key: string) : string;
@@ -638,6 +641,7 @@ begin
    SQLCon.UserName     := 'LPMSAdmin';
    SQLCon.Password     := 'LA01';
    SQLCon.DatabaseName := 'lpmsdefault';
+   SQLCon.Port         := StrToInt(ACMPort);
    SQLTran.DataBase    := SQLCon;
    SQLQry1.Transaction := SQLTran;
 
@@ -740,8 +744,31 @@ begin
    ThisMsg := 'LPMS Server Started on Host ''' + GetHost() + ''' with IP Address ''' + GetIP() + '''';
    DispLogMsg(ThisMsg);
 
-   ThisMsg := 'LPMS Server connected to ''' + ServerHost + '''';
-   DispLogMsg(ThisMsg);
+//--- Attempt a connect to the Host
+
+   try
+
+      LastMsg := '';
+      SQLQry1.Active := True;
+
+      Except on Err : Exception do begin
+
+         LastMsg := '      **Unable to connect to ''' + ServerHost + ''', Data Base error: ''' + Err.Message + '''';
+         DispLogMsg(LastMsg);
+
+      end;
+
+   end;
+
+   if LastMsg = '' then begin
+
+      GetInfo();
+      ThisMsg := 'LPMS Server connected to Host: ''' + ServerHost + ''',   Server Address: ''' + SQLAddress + ''',   Version: ''' + SQLVersion + '''';
+      DispLogMsg(ThisMsg);
+
+   end;
+
+//--- Set up the TCP/IP port on which LPMS Server will listen for requests
 
    tcpServer.DefaultPort := ServerPort;
    tcpServer.Active := True;
@@ -2583,6 +2610,56 @@ begin
 {$ENDIF}
 
    ThisList.Free();
+
+end;
+
+//------------------------------------------------------------------------------
+// Procedure to extract the bind_address and version of the Server we are
+// connecting to
+//------------------------------------------------------------------------------
+procedure TFLPMS_Main.GetInfo();
+begin
+
+//--- Get the Bind Address
+
+   try
+
+      sqlQry1.Close();
+      sqlQry1.SQL.Text := 'SHOW variables WHERE Variable_Name = "bind_address"';
+      sqlQry1.Open();
+
+      except on E : Exception do begin
+
+         Application.MessageBox(Pchar('FATAL: Unexpected database error: ' + #10 + #10 + '''' + E.Message + ''''),'LPMS Access Control Manager - Login',(MB_OK + MB_ICONSTOP));
+         Exit;
+
+      end;
+
+   end;
+
+   SQLAddress := sqlQry1.FieldByName('value').AsString;
+
+//--- Get the Sever version
+
+   try
+
+      sqlQry1.Close();
+      sqlQry1.SQL.Text := 'SHOW variables WHERE Variable_Name = "version"';
+      sqlQry1.Open();
+
+      except on E : Exception do begin
+
+         Application.MessageBox(Pchar('FATAL: Unexpected database error: ' + #10 + #10 + '''' + E.Message + ''''),'LPMS Access Control Manager - Login',(MB_OK + MB_ICONSTOP));
+         Exit;
+
+      end;
+
+   end;
+
+   SQLVersion := sqlQry1.FieldByName('value').AsString;
+
+   sqlQry1.Close();
+   sqlCon.Close();
 
 end;
 
