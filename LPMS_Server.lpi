@@ -67,8 +67,6 @@
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
-            <TargetCPU Value="arm"/>
-            <TargetOS Value="linux"/>
             <Optimizations>
               <OptimizationLevel Value="0"/>
             </Optimizations>

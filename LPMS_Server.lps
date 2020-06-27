@@ -19,16 +19,16 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="738"/>
-        <CursorPos X="118" Y="766"/>
-        <FoldState Value=" T3z90v2 pjRlD0T4]9bl50b8 pieka05611 TLijB08:"/>
+        <TopLine Value="814"/>
+        <CursorPos X="17" Y="835"/>
+        <FoldState Value=" T3rc0}I112 pjRsR0T4]9bl50b8 pieka05611 TLijB08I"/>
         <UsageCount Value="201"/>
         <Bookmarks Count="5">
           <Item0 X="31" Y="957" ID="2"/>
           <Item1 X="58" Y="2254" ID="1"/>
           <Item2 X="47" Y="2303" ID="3"/>
           <Item3 X="74" Y="1859" ID="9"/>
-          <Item4 X="4" Y="758"/>
+          <Item4 X="4" Y="756"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -158,7 +158,7 @@
         <UnitName Value="LPMS_Login"/>
         <EditorIndex Value="1"/>
         <TopLine Value="576"/>
-        <CursorPos Y="647"/>
+        <CursorPos Y="637"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit16>

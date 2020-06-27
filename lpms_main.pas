@@ -474,8 +474,6 @@ var
    RegIni    : TINIFile;
 {$ENDIF}
 
-//   Testing : string;
-
 begin
 
 //--- Set the Format Settings to override the system locale
@@ -628,7 +626,7 @@ begin
    ACMUserID      := RegIni.ReadString('Preferences','ACMUserID','');
    ACMPassword    := Vignere(CYPHER_DEC,RegIni.ReadString('Preferences','ACMPassword',''),SecretPhrase);
    ACMHost        := RegIni.ReadString('Preferences','ACMHost','');
-   ACMPort        := RegIni.ReadString('Preferences','ACMPort','');
+   ACMPort        := RegIni.ReadString('Preferences','ACMPort','3306');
 
    RegIni.Destroy;
 
@@ -833,6 +831,8 @@ begin
    SQLQry1.Close();
 
 //   LogList.Destroy;
+
+   saAbout.Free;
 
 {$IFDEF WINDOWS}
    trIcon.Visible := False;
