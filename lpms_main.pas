@@ -1708,7 +1708,7 @@ begin
 
          end else begin
 
-            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Invalid request: ''' + Request + ''', connection terminated');
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Invalid request: "' + Request + '", connection terminated');
             AContext.Connection.Disconnect();
 
          end;
@@ -1721,7 +1721,7 @@ begin
 
    end else begin
 
-      DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Invalid request: '' + Request + '', connection terminated');
+      DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Invalid request: "' + Request + '", connection terminated');
       AContext.Connection.Disconnect();
       Exit;
 
