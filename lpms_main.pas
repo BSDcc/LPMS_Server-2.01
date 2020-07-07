@@ -1682,34 +1682,71 @@ begin
             DispLogMsg(IntToStr(AContext.Binding.Handle) + '       User''s Company: ' + ThisList.Strings[4]);
             DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Unique Identifier: ' + ThisList.Strings[5]);
             DispLogMsg(IntToStr(AContext.Binding.Handle) + '       Database Prefix: ' + ThisList.Strings[6]);
-            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Checking previous registrations for ''' + ThisList.Strings[5] + ''':');
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Checking whether registration is allowed for "' + ThisList.Strings[6] + '":');
 
-//--- Check whether this unique identifier has been registered before
+//--- Online registrations are allowed for 'evl001' only. Check if this is so
 
-            ThisReply := TStringList.Create;
+            if ThisList.Strings[6] <> 'evl001' then begin
 
-            if (GetRegistration(ThisList.Strings[5]) = True) then
-               RegisterUser(ThisList, ThisReply)
-            else begin
+               try
 
-               ThisReply.Add(IntToStr(REPLY_FAIL));
-               ThisReply.Add(IntToStr(ACTION_DISPMSG));
-               ThisReply.Add('Invalid Registration Request (Already registered) - Please contact BlueCrane Software Development by sending an email to ' + ThisEmail + ' describing the events that lead up to this message');
-               AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+                  ThisReply := TStringList.Create;
+
+                  ThisReply.Add(IntToStr(REPLY_FAIL));
+                  ThisReply.Add(IntToStr(ACTION_DISPMSG));
+                  ThisReply.Add('Invalid Registration Request (Only allowed for "evl001") - Please contact BlueCrane Software Development by sending an email to ' + ThisEmail + ' describing the events that lead up to this message');
+                  AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+
+                  DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Invalid Registration Request (Only allowed for "evl001") - connection terminated');
+                  AContext.Connection.Disconnect();
+
+               finally
+
+                  ThisReply.Free;
+
+               end;
+
+               Exit;
 
             end;
 
+//--- Check whether this unique identifier has been registered before
+
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Checking previous registrations for ''' + ThisList.Strings[5] + ''':');
+
+            try
+
+               ThisReply := TStringList.Create;
+
+               if (GetRegistration(ThisList.Strings[5]) = True) then
+                  RegisterUser(ThisList, ThisReply)
+               else begin
+
+                  ThisReply.Add(IntToStr(REPLY_FAIL));
+                  ThisReply.Add(IntToStr(ACTION_DISPMSG));
+                  ThisReply.Add('Invalid Registration Request (Already registered) - Please contact BlueCrane Software Development by sending an email to ' + ThisEmail + ' describing the events that lead up to this message');
+                  AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+
+               end;
+
 //--- Process the request
 
-            AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
-            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Request for registration completed');
+               AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
+               DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Request for registration completed');
+               AContext.Connection.Disconnect();
+               Exit;
 
-            ThisReply.Destroy;
+            finally
+
+              ThisReply.Free;
+
+            end;
 
          end else begin
 
             DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Invalid request: "' + Request + '", connection terminated');
             AContext.Connection.Disconnect();
+            Exit;
 
          end;
 
@@ -2097,8 +2134,6 @@ begin
 
    S1     := 'SELECT LPMSKey_Unique, LPMSKey_Name, LPMSKey_Email, LPMSKey_Company FROM users WHERE LPMSKey_Unique = "' + ThisUnique + '"';
 
-   FLPMS_Main.Cursor := crHourGlass;
-
 //--- Get the user related information
 
    try
@@ -2110,7 +2145,6 @@ begin
       Except on Err : Exception do begin
 
          DispLogMsg(ThreadNum + '      **Unexpected Data Base [users] error: ''' + Err.Message + '''');
-         FLPMS_Main.Cursor := crDefault;
          Exit;
 
       end;
@@ -2123,7 +2157,6 @@ begin
 
       DispLogMsg(ThreadNum + '      **Unique identifier already registered to ''' + SQLQry1.FieldByName('LPMSKey_Company').AsString + '''.''' + SQLQry1.FieldByName('LPMSKey_Name').AsString + ''' (' + SQLQry1.FieldByName('LPMSKey_Email').AsString + ')''');
       DispLogMsg(ThreadNum + '      **Request denied');
-      FLPMS_Main.Cursor := crDefault;
 
       Result := False;
 
@@ -2169,7 +2202,7 @@ begin
 
    FLPMS_Main.Cursor := crHourGlass;
 
-//--- Get the user related information
+//--- Insert the Evaluation user into he database
 
    try
 
