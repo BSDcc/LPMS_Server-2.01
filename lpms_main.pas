@@ -233,6 +233,7 @@ type
       Position : REC_LPMS_Pos;
    end;
 
+{
    REC_Key_Priv = record                 // Layout of the structure that is
       Key              : string;         // passed to DoDecode and that will
       DaysLeft         : integer;        // be filled with information about
@@ -256,6 +257,7 @@ type
       LPMS_Options4    : boolean;
       License          : integer;
    end;
+}
 
    REC_Key_Chars = record                // Overlay giving access to individual
       ExpDateYL   : char;                // characters in the License Key
@@ -401,15 +403,15 @@ private  { Private Declarations }
    procedure OpenLog(FileName: string);
    procedure SaveLog(FileName: string);
    procedure FindTextString();
-   function  GetHost() : string;
-   function  GetIP() : string;
+//   function  GetHost() : string;
+//   function  GetIP() : string;
    procedure GetInfo();
    function  Assemble(List: TStringList; ThisType: integer) : string;
    function  Disassemble(Str: string; ThisType: integer) : TStringList;
-   function  Vignere(ThisType: integer; Phrase: string; const Key: string) : string;
+//   function  Vignere(ThisType: integer; Phrase: string; const Key: string) : string;
    procedure Do_Layout(This_Form: string; ThisType: integer);
-   function  DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer;
-   function  DoEncode(var Encode_Key_Values: REC_Key_Values): boolean;
+//   function  DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer;
+//   function  DoEncode(var Encode_Key_Values: REC_Key_Values): boolean;
 
 public   { Public Declarations }
 
@@ -451,9 +453,60 @@ const
    TYPE_SAVE          = 1;
    TYPE_LOAD          = 2;
 
+type
+
+  REC_Key_Priv = record                 // Layout of the structure that is
+     Key              : string;         // passed to DoDecode and that will
+     DaysLeft         : integer;        // be filled with information about
+     LPMS_Collections : boolean;        // the passed Key
+     LPMS_DocGen      : boolean;
+     LPMS_Floating    : boolean;
+     LPMS_Options4    : boolean;
+     License          : integer;
+     DBPrefix         : string;
+     Unique           : string;
+     KeyDate          : string;
+  end;
+
+  REC_Key_Values = record               // Layout of the structure that is
+     Unique           : string;         // passed to DoEncode with information
+     ExpDate          : string;         // about the Key that must be generated
+     DBPrefix         : string;         // The new Key is returned in Uniue
+     LPMS_Collections : boolean;
+     LPMS_DocGen      : boolean;
+     LPMS_Floating    : boolean;
+     LPMS_Options4    : boolean;
+     License          : integer;
+  end;
+
 var
    FLPMS_Main : TFLPMS_Main;
    AlreadyRun : boolean = False;
+
+{$IFDEF DARWIN}
+   function  DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; stdcall; external 'libbsd_utilities.dylib';
+   function  DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; stdcall; external 'libbsd_utilities.dylib';
+   function  Vignere(ThisType: integer; Phrase: string; const Key: string) : string; stdcall; external 'libbsd_utilities.dylib';
+   function  SimpleVignere(ThisType: integer; Phrase: string; const Key: string) : string; stdcall; external 'libbsd_utilities.dylib';
+   function  GetHost() : string; stdcall; external 'libbsd_utilities.dylib';
+   function  GetIP() : string; stdcall; external 'libbsd_utilities.dylib';
+{$ENDIF}
+{$IFDEF WINDOWS}
+   function  DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; stdcall; external 'BSD_Utilities.dll';
+   function  DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; stdcall; external 'BSD_Utilities.dll';
+   function  Vignere(ThisType: integer; Phrase: string; const Key: string) : string; stdcall; external 'BSD_Utilities.dll';
+   function  SimpleVignere(ThisType: integer; Phrase: string; const Key: string) : string; stdcall; external 'BSD_Utilities.dll';
+   function  GetHost() : string; stdcall; external 'BSD_Utilities.dll';
+   function  GetIP() : string; stdcall; external 'BSD_Utilities.dll';
+{$ENDIF}
+{$IFDEF LINUX}
+   function  DoDecode(var Decode_Key_Priv: REC_Key_Priv): integer; stdcall; external 'libbsd_utilities.so';
+   function  DoEncode(var Encode_Key_Values: REC_Key_Values): boolean; stdcall; external 'libbsd_utilities.so';
+   function  Vignere(ThisType: integer; Phrase: string; const Key: string) : string; stdcall; external 'libbsd_utilities.so';
+   function  SimpleVignere(ThisType: integer; Phrase: string; const Key: string) : string; stdcall; external 'libbsd_utilities.so';
+   function  GetHost() : string; stdcall; external 'libbsd_utilities.so';
+   function  GetIP() : string; stdcall; external 'libbsd_utilities.so';
+{$ENDIF}
 
 implementation
 
@@ -1416,7 +1469,7 @@ begin
 
       AContext.Connection.IOHandler.WriteLn('LPMS Server Ready');
       CodedReq := AContext.Connection.IOHandler.ReadLn();
-      Request := Vignere(CYPHER_DEC,CodedReq,SecretPhrase);
+      Request := SimpleVignere(CYPHER_DEC,CodedReq,SecretPhrase);
 
       case StrToInt(Request.SubString(0,1)) of
 
@@ -1858,9 +1911,9 @@ end;
 //---------------------------------------------------------------------------
 function TFLPMS_Main.GetUser(ThisList: TStringList): boolean;
 const
-   CURKEY           = 1;
-   COMPCD           = 2;
-   UNIQUE           = 3;
+   CURKEY = 1;
+   COMPCD = 2;
+   UNIQUE = 3;
 
 var
    UserRenewals, UserXfer, UserNewLicense, Interval : integer;
@@ -2506,6 +2559,7 @@ begin
 
 end;
 
+{
 //---------------------------------------------------------------------------
 // Function to Extract the Hostname of the local machine
 //---------------------------------------------------------------------------
@@ -2532,7 +2586,8 @@ begin
    AProcess.Free;
 
 end;
-
+}
+{
 //---------------------------------------------------------------------------
 // Function to Extract the IP Address of the local machine
 //---------------------------------------------------------------------------
@@ -2645,6 +2700,7 @@ begin
    ThisList.Free();
 
 end;
+}
 
 //------------------------------------------------------------------------------
 // Procedure to extract the bind_address and version of the Server we are
@@ -2713,7 +2769,7 @@ begin
       Str := Str + List.Strings[idx] + Delim;
 
    if (ThisType = TYPE_CODED) then
-        Str := Vignere(CYPHER_ENC,Str,SecretPhrase);
+        Str := SimpleVignere(CYPHER_ENC,Str,SecretPhrase);
 
    Result := Str;
 
@@ -2730,7 +2786,7 @@ var
 begin
 
    if ThisType = TYPE_CODED then
-      ThisStr := Vignere(CYPHER_DEC,Str,SecretPhrase)
+      ThisStr := SimpleVignere(CYPHER_DEC,Str,SecretPhrase)
    else
       ThisStr := Str;
 
@@ -2740,6 +2796,7 @@ begin
 
 end;
 
+{
 //---------------------------------------------------------------------------
 // Function to do a Vignere Cypher
 //---------------------------------------------------------------------------
@@ -2834,6 +2891,7 @@ begin
    Result := Encrypted;
 
 end;
+}
 
 //------------------------------------------------------------------------------
 // Function to Save/Load the Form Restore information for the passed form
@@ -2880,6 +2938,7 @@ begin
 
 end;
 
+{
 //------------------------------------------------------------------------------
 // Function to decode a key contained in REC_Key_Priv (passed by reference)
 // and return a fully populated REC_Key_Priv. Function Result is the number of
@@ -3440,6 +3499,7 @@ begin
    Result := True;
 
 end;
+}
 
 //------------------------------------------------------------------------------
 end.

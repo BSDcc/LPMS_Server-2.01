@@ -62,6 +62,7 @@
           <Version Value="11"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <Libraries Value="../BSD_Utilities/lib/$(TargetCPU)-$(TargetOS)"/>
             <OtherUnitFiles Value="../BSD_Utilities"/>
             <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/$(BuildMode)"/>
           </SearchPaths>

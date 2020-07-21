@@ -145,9 +145,9 @@ object FLPMS_Main: TFLPMS_Main
       TabOrder = 0
       object Label2: TLabel
         Left = 12
-        Height = 15
+        Height = 17
         Top = 12
-        Width = 58
+        Width = 63
         Caption = 'Text to Find'
         ParentColor = False
       end
@@ -225,7 +225,7 @@ object FLPMS_Main: TFLPMS_Main
       end
       object edtFind: TEdit
         Left = 89
-        Height = 25
+        Height = 27
         Top = 8
         Width = 800
         Anchors = [akTop, akLeft, akRight]
@@ -273,7 +273,7 @@ object FLPMS_Main: TFLPMS_Main
       end
       object edtACMParm: TEditButton
         Left = 12
-        Height = 25
+        Height = 27
         Top = 5
         Width = 640
         Anchors = [akTop, akLeft, akRight]
@@ -315,7 +315,7 @@ object FLPMS_Main: TFLPMS_Main
           item
             AutoSize = True
             Caption = 'Message'
-            Width = 783
+            Width = 781
           end>
         GridLines = True
         TabOrder = 0
@@ -336,41 +336,41 @@ object FLPMS_Main: TFLPMS_Main
     TabOrder = 2
     object Label14: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 12
-      Width = 58
+      Width = 66
       Caption = 'Server Port:'
       ParentColor = False
     end
     object Label15: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 42
-      Width = 61
+      Width = 69
       Caption = 'Server Host:'
       ParentColor = False
     end
     object Lable7: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 72
-      Width = 41
+      Width = 45
       Caption = 'Log File:'
       ParentColor = False
     end
     object Label16: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 132
-      Width = 75
+      Width = 82
       Caption = 'Latest Version:'
       ParentColor = False
     end
     object Label17: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 162
-      Width = 88
+      Width = 97
       Caption = 'Special Message:'
       ParentColor = False
     end
@@ -390,65 +390,65 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label18: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 222
-      Width = 77
+      Width = 89
       Caption = 'Download Type:'
       ParentColor = False
     end
     object Label19: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 252
-      Width = 74
+      Width = 85
       Caption = 'Download Size:'
       ParentColor = False
     end
     object Label20: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 282
-      Width = 59
+      Width = 66
       Caption = 'Host Name:'
       ParentColor = False
     end
     object Label21: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 312
-      Width = 38
+      Width = 46
       Caption = 'User ID:'
       ParentColor = False
     end
     object Label22: TLabel
       Left = 268
-      Height = 15
+      Height = 17
       Top = 312
-      Width = 51
+      Width = 57
       Caption = 'Password:'
       ParentColor = False
     end
     object Label23: TLabel
       Left = 268
-      Height = 15
+      Height = 17
       Top = 252
-      Width = 74
+      Width = 84
       Caption = 'Button Legend:'
       ParentColor = False
     end
     object Label24: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 342
-      Width = 58
+      Width = 64
       Caption = 'Source File:'
       ParentColor = False
     end
     object Label25: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 372
-      Width = 80
+      Width = 89
       Caption = 'Destination File:'
       ParentColor = False
     end
@@ -461,9 +461,9 @@ object FLPMS_Main: TFLPMS_Main
     end
     object lblStateP: TLabel
       Left = 12
-      Height = 15
-      Top = 502
-      Width = 46
+      Height = 17
+      Top = 500
+      Width = 49
       Anchors = [akLeft, akBottom]
       Caption = 'lblStateP'
       ParentColor = False
@@ -508,7 +508,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtHost: TEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 38
       Width = 830
       Anchors = [akTop, akLeft, akRight]
@@ -517,7 +517,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtVersion: TEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 128
       Width = 121
       OnChange = edtHostChange
@@ -525,7 +525,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtSpecialMsg: TEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 158
       Width = 831
       Anchors = [akTop, akLeft, akRight]
@@ -534,25 +534,25 @@ object FLPMS_Main: TFLPMS_Main
     end
     object chkActivate: TCheckBox
       Left = 120
-      Height = 25
+      Height = 21
       Top = 186
-      Width = 158
+      Width = 165
       Caption = 'Activate Special Message'
       OnChange = edtHostChange
       TabOrder = 7
     end
     object chkShowFind: TCheckBox
       Left = 120
-      Height = 25
+      Height = 21
       Top = 96
-      Width = 113
+      Width = 118
       Caption = 'Show Find Dialog'
       OnChange = edtHostChange
       TabOrder = 3
     end
     object edtHostname: TEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 278
       Width = 830
       Anchors = [akTop, akLeft, akRight]
@@ -561,7 +561,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtUserID: TEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 308
       Width = 121
       OnChange = edtHostChange
@@ -569,7 +569,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtPassword: TEdit
       Left = 376
-      Height = 25
+      Height = 27
       Top = 308
       Width = 121
       EchoMode = emPassword
@@ -579,7 +579,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtSourceFile: TEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 338
       Width = 830
       Anchors = [akTop, akLeft, akRight]
@@ -588,7 +588,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtDestFile: TEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 368
       Width = 830
       Anchors = [akTop, akLeft, akRight]
@@ -597,16 +597,16 @@ object FLPMS_Main: TFLPMS_Main
     end
     object chkDownload: TCheckBox
       Left = 120
-      Height = 25
+      Height = 21
       Top = 396
-      Width = 120
+      Width = 127
       Caption = 'Activate Download'
       OnChange = edtHostChange
       TabOrder = 16
     end
     object cbType: TComboBox
       Left = 120
-      Height = 25
+      Height = 27
       Top = 218
       Width = 121
       ItemHeight = 0
@@ -661,16 +661,16 @@ object FLPMS_Main: TFLPMS_Main
     end
     object chkOverride: TCheckBox
       Left = 268
-      Height = 25
+      Height = 21
       Top = 396
-      Width = 143
+      Width = 154
       Caption = 'Override Version Check'
       OnChange = edtHostChange
       TabOrder = 17
     end
     object cbxLegend: TComboBox
       Left = 376
-      Height = 25
+      Height = 27
       Top = 248
       Width = 121
       ItemHeight = 0
@@ -686,7 +686,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object spePort: TSpinEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 8
       Width = 60
       MaxValue = 0
@@ -696,7 +696,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object speSize: TSpinEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 248
       Width = 90
       MaxValue = 0
@@ -705,7 +705,7 @@ object FLPMS_Main: TFLPMS_Main
     end
     object edtLogFile: TDirectoryEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 68
       Width = 830
       OnAcceptDirectory = edtLogFileAcceptDirectory
@@ -719,24 +719,24 @@ object FLPMS_Main: TFLPMS_Main
     end
     object chkMaintenance: TCheckBox
       Left = 268
-      Height = 25
+      Height = 21
       Top = 96
-      Width = 124
+      Width = 131
       Caption = 'Maintenance Mode'
       OnChange = chkMaintenanceChange
       TabOrder = 4
     end
     object Label26: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 432
-      Width = 85
+      Width = 94
       Caption = 'LPMS ACM User:'
       ParentColor = False
     end
     object edtACMUserID: TEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 428
       Width = 121
       OnChange = edtHostChange
@@ -744,15 +744,15 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label27: TLabel
       Left = 12
-      Height = 15
+      Height = 17
       Top = 462
-      Width = 83
+      Width = 90
       Caption = 'LPMS ACM Port:'
       ParentColor = False
     end
     object edtACMHost: TEdit
       Left = 376
-      Height = 25
+      Height = 27
       Top = 458
       Width = 575
       Anchors = [akTop, akLeft, akRight]
@@ -768,15 +768,15 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label28: TLabel
       Left = 268
-      Height = 15
+      Height = 17
       Top = 432
-      Width = 87
+      Width = 93
       Caption = 'LPMS ACM Pass:'
       ParentColor = False
     end
     object edtACMPassword: TEdit
       Left = 376
-      Height = 25
+      Height = 27
       Top = 428
       Width = 121
       EchoMode = emPassword
@@ -786,15 +786,15 @@ object FLPMS_Main: TFLPMS_Main
     end
     object Label29: TLabel
       Left = 268
-      Height = 15
+      Height = 17
       Top = 462
-      Width = 86
+      Width = 93
       Caption = 'LPMS ACM Host:'
       ParentColor = False
     end
     object edtACMPort: TEdit
       Left = 120
-      Height = 25
+      Height = 27
       Top = 458
       Width = 121
       OnChange = edtHostChange

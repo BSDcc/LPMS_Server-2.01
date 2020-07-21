@@ -2,13 +2,13 @@
 <CONFIG>
   <ProjectSession>
     <Version Value="11"/>
-    <BuildModes Active="Release"/>
-    <Units Count="17">
+    <BuildModes Active="Debug"/>
+    <Units Count="19">
       <Unit0>
         <Filename Value="LPMS_Server.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <CursorPos Y="25"/>
+        <CursorPos Y="24"/>
         <UsageCount Value="201"/>
       </Unit0>
       <Unit1>
@@ -19,19 +19,19 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="2155"/>
-        <CursorPos Y="2180"/>
-        <FoldState Value=" T3rc0}I112 TLik508="/>
+        <TopLine Value="522"/>
+        <CursorPos X="74" Y="1098"/>
+        <FoldState Value=" TLmK0O01 p0_c08]7t90R]FjRmM0{E1 T3t50}I[J4WoC0x2[S4lF0T4]9bl50b]sieka057 pqMrV0{1]kn7pD0a2]Sck30B3 pm5q80i3e"/>
         <UsageCount Value="201"/>
         <Bookmarks Count="5">
-          <Item0 X="31" Y="957" ID="2"/>
-          <Item1 X="58" Y="2287" ID="1"/>
-          <Item2 X="47" Y="2336" ID="3"/>
-          <Item3 X="74" Y="1896" ID="9"/>
-          <Item4 X="18" Y="1758"/>
+          <Item0 X="31" Y="1010" ID="2"/>
+          <Item1 X="58" Y="2340" ID="1"/>
+          <Item2 X="47" Y="2389" ID="3"/>
+          <Item3 X="74" Y="1949" ID="9"/>
+          <Item4 X="18" Y="1811"/>
         </Bookmarks>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="../BSD_Utilities/lpms_inputquery.pas"/>
@@ -42,7 +42,7 @@
         <UnitName Value="LPMS_InputQuery"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="129"/>
-        <UsageCount Value="76"/>
+        <UsageCount Value="78"/>
       </Unit2>
       <Unit3>
         <Filename Value="../LPMS_ACM-2.01/lpms_main.pas"/>
@@ -51,9 +51,10 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="LPMS_Main"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="2953"/>
-        <CursorPos X="41" Y="2985"/>
-        <UsageCount Value="6"/>
+        <TopLine Value="562"/>
+        <CursorPos Y="399"/>
+        <FoldState Value=" T3uU032 pjDjW0,3 pm8o80{Y1]J5m10{I1]KRp7053]J2jR095]9eka0{G[c49lU0B]JiXjV0I[S40k60T2]Ibjc0{~[u4DnV0J[94TkP0^2 pj3lI0h2 TL:W05K"/>
+        <UsageCount Value="10"/>
       </Unit3>
       <Unit4>
         <Filename Value="../LPMS_Backup_Manager-3.02.git/ldbackupapp.pas"/>
@@ -156,132 +157,146 @@
       <Unit16>
         <Filename Value="../LPMS_ACM-2.01/lpms_login.pas"/>
         <UnitName Value="LPMS_Login"/>
-        <TopLine Value="520"/>
+        <EditorIndex Value="-1"/>
         <CursorPos Y="637"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
       </Unit16>
+      <Unit17>
+        <Filename Value="../BSD_Utilities/BSD_Utilities.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2588"/>
+        <CursorPos Y="2627"/>
+        <UsageCount Value="10"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="../LPMS_Utility-3.01.git/lpms_utilitymulticpy.pas"/>
+        <UnitName Value="LPMS_UtilityMultiCpy"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="64"/>
+        <CursorPos Y="90"/>
+        <UsageCount Value="10"/>
+      </Unit18>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1708" TopLine="1688"/>
+        <Caret Line="2763" Column="29" TopLine="2730"/>
       </Position1>
       <Position2>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1394" Column="17" TopLine="1382"/>
+        <Caret Line="361" Column="59" TopLine="343"/>
       </Position2>
       <Position3>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1695" TopLine="1683"/>
+        <Caret Line="409" Column="23" TopLine="377"/>
       </Position3>
       <Position4>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1696" TopLine="1683"/>
+        <Caret Line="459" Column="21" TopLine="426"/>
       </Position4>
       <Position5>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1697" TopLine="1683"/>
+        <Caret Line="462" Column="21" TopLine="429"/>
       </Position5>
       <Position6>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1698" TopLine="1683"/>
+        <Caret Line="465" Column="27" TopLine="432"/>
       </Position6>
       <Position7>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1700" TopLine="1683"/>
+        <Caret Line="466" Column="21" TopLine="433"/>
       </Position7>
       <Position8>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1701" TopLine="1683"/>
+        <Caret Line="632" Column="29" TopLine="600"/>
       </Position8>
       <Position9>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1702" TopLine="1683"/>
+        <Caret Line="640" Column="29" TopLine="608"/>
       </Position9>
       <Position10>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1708" TopLine="1696"/>
+        <Caret Line="1092" Column="31" TopLine="1026"/>
       </Position10>
       <Position11>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1712" Column="13" TopLine="1697"/>
+        <Caret Line="1134" Column="55" TopLine="1102"/>
       </Position11>
       <Position12>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1715" TopLine="1697"/>
+        <Caret Line="1140" Column="58" TopLine="1108"/>
       </Position12>
       <Position13>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1717" TopLine="1697"/>
+        <Caret Line="1432" Column="31" TopLine="1399"/>
       </Position13>
       <Position14>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1719" TopLine="1699"/>
+        <Caret Line="2732" Column="29" TopLine="2339"/>
       </Position14>
       <Position15>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1721" TopLine="1701"/>
+        <Caret Line="2749" Column="31" TopLine="2716"/>
       </Position15>
       <Position16>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1725" TopLine="1705"/>
+        <Caret Line="412" Column="3" TopLine="380"/>
       </Position16>
       <Position17>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1726" TopLine="1706"/>
+        <Caret Line="499" Column="22" TopLine="471"/>
       </Position17>
       <Position18>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1727" TopLine="1707"/>
+        <Caret Line="1578" Column="21" TopLine="1555"/>
       </Position18>
       <Position19>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1728" TopLine="1708"/>
+        <Caret Line="1691" Column="21" TopLine="1659"/>
       </Position19>
       <Position20>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1734" TopLine="1722"/>
+        <Caret Line="1912" Column="11" TopLine="1815"/>
       </Position20>
       <Position21>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1735" TopLine="1722"/>
+        <Caret Column="57"/>
       </Position21>
       <Position22>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1739" TopLine="1722"/>
+        <Caret Line="251" Column="63" TopLine="219"/>
       </Position22>
       <Position23>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1717" TopLine="1705"/>
+        <Caret Line="414" Column="24" TopLine="382"/>
       </Position23>
       <Position24>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1736" TopLine="1718"/>
+        <Caret Line="472" Column="62" TopLine="439"/>
       </Position24>
       <Position25>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1740" TopLine="1720"/>
+        <Caret Line="500" Column="22" TopLine="467"/>
       </Position25>
       <Position26>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1717" TopLine="1705"/>
+        <Caret Line="2125" Column="15" TopLine="2093"/>
       </Position26>
       <Position27>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1753" TopLine="1741"/>
+        <Caret Line="2238" TopLine="2205"/>
       </Position27>
       <Position28>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1754" TopLine="1741"/>
+        <Caret Line="2125" TopLine="2106"/>
       </Position28>
       <Position29>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1763" Column="12" TopLine="1745"/>
+        <Caret Line="2238" TopLine="2217"/>
       </Position29>
       <Position30>
         <Filename Value="lpms_main.pas"/>
-        <Caret Line="1721" Column="35" TopLine="1706"/>
+        <Caret Line="2241" TopLine="2217"/>
       </Position30>
     </JumpHistory>
     <RunParams>
@@ -290,6 +305,15 @@
     </RunParams>
   </ProjectSession>
   <Debugging>
+    <BreakPoints Count="1">
+      <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="lpms_main.pas"/>
+        <Line Value="2050"/>
+      </Item1>
+    </BreakPoints>
     <Watches Count="5">
       <Item1>
         <Expression Value="S1"/>
