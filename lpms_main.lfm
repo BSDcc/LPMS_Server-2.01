@@ -123,6 +123,483 @@ object FLPMS_Main: TFLPMS_Main
       Style = tbsSeparator
     end
   end
+  object pnlProperties: TPanel
+    Left = 0
+    Height = 530
+    Top = 34
+    Width = 960
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 530
+    ClientWidth = 960
+    TabOrder = 2
+    object Label14: TLabel
+      Left = 12
+      Height = 17
+      Top = 12
+      Width = 66
+      Caption = 'Server Port:'
+      ParentColor = False
+    end
+    object Label15: TLabel
+      Left = 12
+      Height = 17
+      Top = 42
+      Width = 69
+      Caption = 'Server Host:'
+      ParentColor = False
+    end
+    object Lable7: TLabel
+      Left = 12
+      Height = 17
+      Top = 72
+      Width = 45
+      Caption = 'Log File:'
+      ParentColor = False
+    end
+    object Label16: TLabel
+      Left = 12
+      Height = 17
+      Top = 132
+      Width = 82
+      Caption = 'Latest Version:'
+      ParentColor = False
+    end
+    object Label17: TLabel
+      Left = 12
+      Height = 17
+      Top = 162
+      Width = 97
+      Caption = 'Special Message:'
+      ParentColor = False
+    end
+    object Bevel6: TBevel
+      Left = 0
+      Height = 2
+      Top = 120
+      Width = 968
+      Anchors = [akTop, akLeft, akRight]
+    end
+    object Bevel7: TBevel
+      Left = 0
+      Height = 2
+      Top = 210
+      Width = 968
+      Anchors = [akTop, akLeft, akRight]
+    end
+    object Label18: TLabel
+      Left = 12
+      Height = 17
+      Top = 222
+      Width = 89
+      Caption = 'Download Type:'
+      ParentColor = False
+    end
+    object Label19: TLabel
+      Left = 12
+      Height = 17
+      Top = 252
+      Width = 85
+      Caption = 'Download Size:'
+      ParentColor = False
+    end
+    object Label20: TLabel
+      Left = 12
+      Height = 17
+      Top = 282
+      Width = 66
+      Caption = 'Host Name:'
+      ParentColor = False
+    end
+    object Label21: TLabel
+      Left = 12
+      Height = 17
+      Top = 312
+      Width = 46
+      Caption = 'User ID:'
+      ParentColor = False
+    end
+    object Label22: TLabel
+      Left = 268
+      Height = 17
+      Top = 312
+      Width = 57
+      Caption = 'Password:'
+      ParentColor = False
+    end
+    object Label23: TLabel
+      Left = 268
+      Height = 17
+      Top = 252
+      Width = 84
+      Caption = 'Button Legend:'
+      ParentColor = False
+    end
+    object Label24: TLabel
+      Left = 12
+      Height = 17
+      Top = 342
+      Width = 64
+      Caption = 'Source File:'
+      ParentColor = False
+    end
+    object Label25: TLabel
+      Left = 12
+      Height = 17
+      Top = 372
+      Width = 89
+      Caption = 'Destination File:'
+      ParentColor = False
+    end
+    object Bevel8: TBevel
+      Left = 1
+      Height = 2
+      Top = 420
+      Width = 968
+      Anchors = [akTop, akLeft, akRight]
+    end
+    object lblStateP: TLabel
+      Left = 12
+      Height = 17
+      Top = 500
+      Width = 49
+      Anchors = [akLeft, akBottom]
+      Caption = 'lblStateP'
+      ParentColor = False
+    end
+    object btnSize: TSpeedButton
+      Left = 214
+      Height = 27
+      Hint = 'Get the size of the Source File'
+      Top = 248
+      Width = 27
+      Glyph.Data = {
+        36030000424D3603000000000000360000002800000010000000100000000100
+        18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
+        078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
+        BE078DBEFF00FFFF00FFB88989B88989B88989B88989B88989B88989B8898965
+        CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FFB88989FEFDFB
+        FEFDFBFEFDFBFEFDFBFEFDFB4D87430C85180C85180C851851BDB66ED4F93EB1
+        D984D7EB078DBEFF00FFB88989FEF9F4FEF9F4FEF9F4FEF9F4FEF9F4B8898967
+        CED60C85181398250C85184BB79A42B4D4AEF1F9078DBEFF00FFB88989FEF6ED
+        FEF6EDFEF6EDFEF6EDFEF6EDB8898983E4FC84E4FC0C851826B73F0C851836A8
+        A1B3F4F9078DBEFF00FFB88989FFF2E7FFF2E7FFF2E7FAE8DEFAE8DEB889898D
+        EBFD8DEBFD5DC0A70C851837C4580C8518ACF0EB6DCAE0078DBEB88989FFEFE0
+        FFEFE0FFEFE0D09F9ED0A09EC59393ACE4DA9FDBCA82AB810C85184EDB780C85
+        1898BA99A3BFAC078DBEB88989FFEBD9FFEBD9F3D7C9D5ABA8D1C8C2CD999907
+        87800C85180C851847D06E59E38842C6670C85180C8518078DBEB88989FFE8D2
+        FFE8D2F3D4C4D9AEACCD99999AF6FE9BF5FE63C5A40C85185DE88E63EE984CD0
+        750C8518F0F1E7B88989B88989B88989B88989B88989CD9999A1FAFEA1FBFEA0
+        FAFEA1FBFE737E570C851846CB6E0C8518EFEDDFFEF6EDB88989FF00FF078DBE
+        FEFEFEA5FEFFA5FEFFA5FEFF078DBE078DBE078DBEB8898984B47B0C8518EDE8
+        D7FAE8DEFAE8DEB88989FF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
+        00FFFF00FFB88989FFEFE0FFEFE0FFEFE0D09F9ED0A09EC59393FF00FFFF00FF
+        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB88989FFEBD9FFEBD9F3D7
+        C9D5ABA8D1C8C2CD9999FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+        00FFFF00FFB88989FFE8D2FFE8D2F3D4C4D9AEACCD9999FF00FFFF00FFFF00FF
+        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB88989B88989B88989B889
+        89CD9999FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+        00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+      }
+      OnClick = btnSizeClick
+      ShowHint = True
+      ParentShowHint = False
+    end
+    object edtHost: TEdit
+      Left = 120
+      Height = 27
+      Top = 38
+      Width = 830
+      Anchors = [akTop, akLeft, akRight]
+      OnChange = edtHostChange
+      TabOrder = 1
+    end
+    object edtVersion: TEdit
+      Left = 120
+      Height = 27
+      Top = 128
+      Width = 121
+      OnChange = edtHostChange
+      TabOrder = 5
+    end
+    object edtSpecialMsg: TEdit
+      Left = 120
+      Height = 27
+      Top = 158
+      Width = 831
+      Anchors = [akTop, akLeft, akRight]
+      OnChange = edtHostChange
+      TabOrder = 6
+    end
+    object chkActivate: TCheckBox
+      Left = 120
+      Height = 21
+      Top = 186
+      Width = 165
+      Caption = 'Activate Special Message'
+      OnChange = edtHostChange
+      TabOrder = 7
+    end
+    object chkShowFind: TCheckBox
+      Left = 120
+      Height = 21
+      Top = 96
+      Width = 118
+      Caption = 'Show Find Dialog'
+      OnChange = edtHostChange
+      TabOrder = 3
+    end
+    object edtHostname: TEdit
+      Left = 120
+      Height = 27
+      Top = 278
+      Width = 830
+      Anchors = [akTop, akLeft, akRight]
+      OnChange = edtHostChange
+      TabOrder = 11
+    end
+    object edtUserID: TEdit
+      Left = 120
+      Height = 27
+      Top = 308
+      Width = 121
+      OnChange = edtHostChange
+      TabOrder = 12
+    end
+    object edtPassword: TEdit
+      Left = 376
+      Height = 27
+      Top = 308
+      Width = 121
+      EchoMode = emPassword
+      OnChange = edtHostChange
+      PasswordChar = '*'
+      TabOrder = 13
+    end
+    object edtSourceFile: TEdit
+      Left = 120
+      Height = 27
+      Top = 338
+      Width = 830
+      Anchors = [akTop, akLeft, akRight]
+      OnChange = edtHostChange
+      TabOrder = 14
+    end
+    object edtDestFile: TEdit
+      Left = 120
+      Height = 27
+      Top = 368
+      Width = 830
+      Anchors = [akTop, akLeft, akRight]
+      OnChange = edtHostChange
+      TabOrder = 15
+    end
+    object chkDownload: TCheckBox
+      Left = 120
+      Height = 21
+      Top = 396
+      Width = 127
+      Caption = 'Activate Download'
+      OnChange = edtHostChange
+      TabOrder = 16
+    end
+    object cbType: TComboBox
+      Left = 120
+      Height = 27
+      Top = 218
+      Width = 121
+      ItemHeight = 0
+      ItemIndex = 0
+      Items.Strings = (
+        '--- Select ---'
+        'Update'
+        'Fees'
+      )
+      OnChange = edtHostChange
+      TabOrder = 8
+      Text = '--- Select ---'
+    end
+    object btnMinimiseP: TButton
+      Left = 633
+      Height = 25
+      Top = 498
+      Width = 75
+      Action = ToolsMinimise
+      Anchors = [akRight, akBottom]
+      TabOrder = 22
+    end
+    object btnExitP: TButton
+      Left = 714
+      Height = 25
+      Top = 498
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Exit'
+      OnClick = btnExitLClick
+      TabOrder = 23
+    end
+    object btnCancelP: TButton
+      Left = 795
+      Height = 25
+      Top = 498
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Cancel'
+      OnClick = btnCancelPClick
+      TabOrder = 24
+    end
+    object btnUpdateP: TButton
+      Left = 876
+      Height = 25
+      Top = 498
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Update'
+      OnClick = btnUpdatePClick
+      TabOrder = 25
+    end
+    object chkOverride: TCheckBox
+      Left = 268
+      Height = 21
+      Top = 396
+      Width = 154
+      Caption = 'Override Version Check'
+      OnChange = edtHostChange
+      TabOrder = 17
+    end
+    object cbxLegend: TComboBox
+      Left = 376
+      Height = 27
+      Top = 248
+      Width = 121
+      ItemHeight = 0
+      ItemIndex = 1
+      Items.Strings = (
+        'Install'
+        'Update'
+        'Import'
+      )
+      OnChange = edtHostChange
+      TabOrder = 10
+      Text = 'Update'
+    end
+    object spePort: TSpinEdit
+      Left = 120
+      Height = 27
+      Top = 8
+      Width = 60
+      MaxValue = 0
+      OnChange = edtHostChange
+      TabOrder = 0
+      Value = 6001
+    end
+    object speSize: TSpinEdit
+      Left = 120
+      Height = 27
+      Top = 248
+      Width = 90
+      MaxValue = 0
+      OnChange = edtHostChange
+      TabOrder = 9
+    end
+    object edtLogFile: TDirectoryEdit
+      Left = 120
+      Height = 27
+      Top = 68
+      Width = 830
+      OnAcceptDirectory = edtLogFileAcceptDirectory
+      ShowHidden = False
+      ButtonWidth = 28
+      NumGlyphs = 1
+      Anchors = [akTop, akLeft, akRight]
+      MaxLength = 0
+      TabOrder = 2
+      OnButtonClick = edtLogFileButtonClick
+    end
+    object chkMaintenance: TCheckBox
+      Left = 268
+      Height = 21
+      Top = 96
+      Width = 131
+      Caption = 'Maintenance Mode'
+      OnChange = chkMaintenanceChange
+      TabOrder = 4
+    end
+    object Label26: TLabel
+      Left = 12
+      Height = 17
+      Top = 432
+      Width = 94
+      Caption = 'LPMS ACM User:'
+      ParentColor = False
+    end
+    object edtACMUserID: TEdit
+      Left = 120
+      Height = 27
+      Top = 428
+      Width = 121
+      OnChange = edtHostChange
+      TabOrder = 18
+    end
+    object Label27: TLabel
+      Left = 12
+      Height = 17
+      Top = 462
+      Width = 90
+      Caption = 'LPMS ACM Port:'
+      ParentColor = False
+    end
+    object edtACMHost: TEdit
+      Left = 376
+      Height = 27
+      Top = 458
+      Width = 575
+      Anchors = [akTop, akLeft, akRight]
+      OnChange = edtHostChange
+      TabOrder = 21
+    end
+    object Bevel9: TBevel
+      Left = 0
+      Height = 2
+      Top = 490
+      Width = 968
+      Anchors = [akTop, akLeft, akRight]
+    end
+    object Label28: TLabel
+      Left = 268
+      Height = 17
+      Top = 432
+      Width = 93
+      Caption = 'LPMS ACM Pass:'
+      ParentColor = False
+    end
+    object edtACMPassword: TEdit
+      Left = 376
+      Height = 27
+      Top = 428
+      Width = 121
+      EchoMode = emPassword
+      OnChange = edtHostChange
+      PasswordChar = '*'
+      TabOrder = 19
+    end
+    object Label29: TLabel
+      Left = 268
+      Height = 17
+      Top = 462
+      Width = 93
+      Caption = 'LPMS ACM Host:'
+      ParentColor = False
+    end
+    object edtACMPort: TEdit
+      Left = 120
+      Height = 27
+      Top = 458
+      Width = 121
+      OnChange = edtHostChange
+      TabOrder = 20
+    end
+  end
   object pnlLog: TPanel
     Left = 0
     Height = 530
@@ -145,9 +622,9 @@ object FLPMS_Main: TFLPMS_Main
       TabOrder = 0
       object Label2: TLabel
         Left = 12
-        Height = 15
+        Height = 17
         Top = 12
-        Width = 58
+        Width = 63
         Caption = 'Text to Find'
         ParentColor = False
       end
@@ -225,7 +702,7 @@ object FLPMS_Main: TFLPMS_Main
       end
       object edtFind: TEdit
         Left = 89
-        Height = 25
+        Height = 27
         Top = 8
         Width = 800
         Anchors = [akTop, akLeft, akRight]
@@ -273,7 +750,7 @@ object FLPMS_Main: TFLPMS_Main
       end
       object edtACMParm: TEditButton
         Left = 12
-        Height = 25
+        Height = 27
         Top = 5
         Width = 640
         Anchors = [akTop, akLeft, akRight]
@@ -310,495 +787,18 @@ object FLPMS_Main: TFLPMS_Main
           end        
           item
             Caption = 'Time'
-            Width = 80
+            Width = 86
           end        
           item
             AutoSize = True
             Caption = 'Message'
-            Width = 783
+            Width = 775
           end>
         GridLines = True
         TabOrder = 0
         ViewStyle = vsReport
         OnClick = lvLogClick
       end
-    end
-  end
-  object pnlProperties: TPanel
-    Left = 0
-    Height = 530
-    Top = 34
-    Width = 960
-    Align = alClient
-    BevelOuter = bvNone
-    ClientHeight = 530
-    ClientWidth = 960
-    TabOrder = 2
-    object Label14: TLabel
-      Left = 12
-      Height = 15
-      Top = 12
-      Width = 58
-      Caption = 'Server Port:'
-      ParentColor = False
-    end
-    object Label15: TLabel
-      Left = 12
-      Height = 15
-      Top = 42
-      Width = 61
-      Caption = 'Server Host:'
-      ParentColor = False
-    end
-    object Lable7: TLabel
-      Left = 12
-      Height = 15
-      Top = 72
-      Width = 41
-      Caption = 'Log File:'
-      ParentColor = False
-    end
-    object Label16: TLabel
-      Left = 12
-      Height = 15
-      Top = 132
-      Width = 75
-      Caption = 'Latest Version:'
-      ParentColor = False
-    end
-    object Label17: TLabel
-      Left = 12
-      Height = 15
-      Top = 162
-      Width = 88
-      Caption = 'Special Message:'
-      ParentColor = False
-    end
-    object Bevel6: TBevel
-      Left = 0
-      Height = 2
-      Top = 120
-      Width = 968
-      Anchors = [akTop, akLeft, akRight]
-    end
-    object Bevel7: TBevel
-      Left = 0
-      Height = 2
-      Top = 210
-      Width = 968
-      Anchors = [akTop, akLeft, akRight]
-    end
-    object Label18: TLabel
-      Left = 12
-      Height = 15
-      Top = 222
-      Width = 77
-      Caption = 'Download Type:'
-      ParentColor = False
-    end
-    object Label19: TLabel
-      Left = 12
-      Height = 15
-      Top = 252
-      Width = 74
-      Caption = 'Download Size:'
-      ParentColor = False
-    end
-    object Label20: TLabel
-      Left = 12
-      Height = 15
-      Top = 282
-      Width = 59
-      Caption = 'Host Name:'
-      ParentColor = False
-    end
-    object Label21: TLabel
-      Left = 12
-      Height = 15
-      Top = 312
-      Width = 38
-      Caption = 'User ID:'
-      ParentColor = False
-    end
-    object Label22: TLabel
-      Left = 268
-      Height = 15
-      Top = 312
-      Width = 51
-      Caption = 'Password:'
-      ParentColor = False
-    end
-    object Label23: TLabel
-      Left = 268
-      Height = 15
-      Top = 252
-      Width = 74
-      Caption = 'Button Legend:'
-      ParentColor = False
-    end
-    object Label24: TLabel
-      Left = 12
-      Height = 15
-      Top = 342
-      Width = 58
-      Caption = 'Source File:'
-      ParentColor = False
-    end
-    object Label25: TLabel
-      Left = 12
-      Height = 15
-      Top = 372
-      Width = 80
-      Caption = 'Destination File:'
-      ParentColor = False
-    end
-    object Bevel8: TBevel
-      Left = 1
-      Height = 2
-      Top = 420
-      Width = 968
-      Anchors = [akTop, akLeft, akRight]
-    end
-    object lblStateP: TLabel
-      Left = 12
-      Height = 15
-      Top = 502
-      Width = 46
-      Anchors = [akLeft, akBottom]
-      Caption = 'lblStateP'
-      ParentColor = False
-    end
-    object btnSize: TSpeedButton
-      Left = 214
-      Height = 27
-      Hint = 'Get the size of the Source File'
-      Top = 248
-      Width = 27
-      Glyph.Data = {
-        36030000424D3603000000000000360000002800000010000000100000000100
-        18000000000000030000120B0000120B00000000000000000000FF00FF078DBE
-        078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078DBE078D
-        BE078DBEFF00FFFF00FFB88989B88989B88989B88989B88989B88989B8898965
-        CDF965CDF865CDF965CDF866CEF939ADD8078DBEFF00FFFF00FFB88989FEFDFB
-        FEFDFBFEFDFBFEFDFBFEFDFB4D87430C85180C85180C851851BDB66ED4F93EB1
-        D984D7EB078DBEFF00FFB88989FEF9F4FEF9F4FEF9F4FEF9F4FEF9F4B8898967
-        CED60C85181398250C85184BB79A42B4D4AEF1F9078DBEFF00FFB88989FEF6ED
-        FEF6EDFEF6EDFEF6EDFEF6EDB8898983E4FC84E4FC0C851826B73F0C851836A8
-        A1B3F4F9078DBEFF00FFB88989FFF2E7FFF2E7FFF2E7FAE8DEFAE8DEB889898D
-        EBFD8DEBFD5DC0A70C851837C4580C8518ACF0EB6DCAE0078DBEB88989FFEFE0
-        FFEFE0FFEFE0D09F9ED0A09EC59393ACE4DA9FDBCA82AB810C85184EDB780C85
-        1898BA99A3BFAC078DBEB88989FFEBD9FFEBD9F3D7C9D5ABA8D1C8C2CD999907
-        87800C85180C851847D06E59E38842C6670C85180C8518078DBEB88989FFE8D2
-        FFE8D2F3D4C4D9AEACCD99999AF6FE9BF5FE63C5A40C85185DE88E63EE984CD0
-        750C8518F0F1E7B88989B88989B88989B88989B88989CD9999A1FAFEA1FBFEA0
-        FAFEA1FBFE737E570C851846CB6E0C8518EFEDDFFEF6EDB88989FF00FF078DBE
-        FEFEFEA5FEFFA5FEFFA5FEFF078DBE078DBE078DBEB8898984B47B0C8518EDE8
-        D7FAE8DEFAE8DEB88989FF00FFFF00FF078DBE078DBE078DBE078DBEFF00FFFF
-        00FFFF00FFB88989FFEFE0FFEFE0FFEFE0D09F9ED0A09EC59393FF00FFFF00FF
-        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB88989FFEBD9FFEBD9F3D7
-        C9D5ABA8D1C8C2CD9999FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-        00FFFF00FFB88989FFE8D2FFE8D2F3D4C4D9AEACCD9999FF00FFFF00FFFF00FF
-        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFB88989B88989B88989B889
-        89CD9999FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-        00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-      }
-      OnClick = btnSizeClick
-      ShowHint = True
-      ParentShowHint = False
-    end
-    object edtHost: TEdit
-      Left = 120
-      Height = 25
-      Top = 38
-      Width = 830
-      Anchors = [akTop, akLeft, akRight]
-      OnChange = edtHostChange
-      TabOrder = 1
-    end
-    object edtVersion: TEdit
-      Left = 120
-      Height = 25
-      Top = 128
-      Width = 121
-      OnChange = edtHostChange
-      TabOrder = 5
-    end
-    object edtSpecialMsg: TEdit
-      Left = 120
-      Height = 25
-      Top = 158
-      Width = 831
-      Anchors = [akTop, akLeft, akRight]
-      OnChange = edtHostChange
-      TabOrder = 6
-    end
-    object chkActivate: TCheckBox
-      Left = 120
-      Height = 25
-      Top = 186
-      Width = 158
-      Caption = 'Activate Special Message'
-      OnChange = edtHostChange
-      TabOrder = 7
-    end
-    object chkShowFind: TCheckBox
-      Left = 120
-      Height = 25
-      Top = 96
-      Width = 113
-      Caption = 'Show Find Dialog'
-      OnChange = edtHostChange
-      TabOrder = 3
-    end
-    object edtHostname: TEdit
-      Left = 120
-      Height = 25
-      Top = 278
-      Width = 830
-      Anchors = [akTop, akLeft, akRight]
-      OnChange = edtHostChange
-      TabOrder = 11
-    end
-    object edtUserID: TEdit
-      Left = 120
-      Height = 25
-      Top = 308
-      Width = 121
-      OnChange = edtHostChange
-      TabOrder = 12
-    end
-    object edtPassword: TEdit
-      Left = 376
-      Height = 25
-      Top = 308
-      Width = 121
-      EchoMode = emPassword
-      OnChange = edtHostChange
-      PasswordChar = '*'
-      TabOrder = 13
-    end
-    object edtSourceFile: TEdit
-      Left = 120
-      Height = 25
-      Top = 338
-      Width = 830
-      Anchors = [akTop, akLeft, akRight]
-      OnChange = edtHostChange
-      TabOrder = 14
-    end
-    object edtDestFile: TEdit
-      Left = 120
-      Height = 25
-      Top = 368
-      Width = 830
-      Anchors = [akTop, akLeft, akRight]
-      OnChange = edtHostChange
-      TabOrder = 15
-    end
-    object chkDownload: TCheckBox
-      Left = 120
-      Height = 25
-      Top = 396
-      Width = 120
-      Caption = 'Activate Download'
-      OnChange = edtHostChange
-      TabOrder = 16
-    end
-    object cbType: TComboBox
-      Left = 120
-      Height = 25
-      Top = 218
-      Width = 121
-      ItemHeight = 0
-      ItemIndex = 0
-      Items.Strings = (
-        '--- Select ---'
-        'Update'
-        'Fees'
-      )
-      OnChange = edtHostChange
-      TabOrder = 8
-      Text = '--- Select ---'
-    end
-    object btnMinimiseP: TButton
-      Left = 633
-      Height = 25
-      Top = 498
-      Width = 75
-      Action = ToolsMinimise
-      Anchors = [akRight, akBottom]
-      TabOrder = 22
-    end
-    object btnExitP: TButton
-      Left = 714
-      Height = 25
-      Top = 498
-      Width = 75
-      Anchors = [akRight, akBottom]
-      Caption = 'Exit'
-      OnClick = btnExitLClick
-      TabOrder = 23
-    end
-    object btnCancelP: TButton
-      Left = 795
-      Height = 25
-      Top = 498
-      Width = 75
-      Anchors = [akRight, akBottom]
-      Caption = 'Cancel'
-      OnClick = btnCancelPClick
-      TabOrder = 24
-    end
-    object btnUpdateP: TButton
-      Left = 876
-      Height = 25
-      Top = 498
-      Width = 75
-      Anchors = [akRight, akBottom]
-      Caption = 'Update'
-      OnClick = btnUpdatePClick
-      TabOrder = 25
-    end
-    object chkOverride: TCheckBox
-      Left = 268
-      Height = 25
-      Top = 396
-      Width = 143
-      Caption = 'Override Version Check'
-      OnChange = edtHostChange
-      TabOrder = 17
-    end
-    object cbxLegend: TComboBox
-      Left = 376
-      Height = 25
-      Top = 248
-      Width = 121
-      ItemHeight = 0
-      ItemIndex = 1
-      Items.Strings = (
-        'Install'
-        'Update'
-        'Import'
-      )
-      OnChange = edtHostChange
-      TabOrder = 10
-      Text = 'Update'
-    end
-    object spePort: TSpinEdit
-      Left = 120
-      Height = 25
-      Top = 8
-      Width = 60
-      MaxValue = 0
-      OnChange = edtHostChange
-      TabOrder = 0
-      Value = 6001
-    end
-    object speSize: TSpinEdit
-      Left = 120
-      Height = 25
-      Top = 248
-      Width = 90
-      MaxValue = 0
-      OnChange = edtHostChange
-      TabOrder = 9
-    end
-    object edtLogFile: TDirectoryEdit
-      Left = 120
-      Height = 25
-      Top = 68
-      Width = 830
-      OnAcceptDirectory = edtLogFileAcceptDirectory
-      ShowHidden = False
-      ButtonWidth = 28
-      NumGlyphs = 1
-      Anchors = [akTop, akLeft, akRight]
-      MaxLength = 0
-      TabOrder = 2
-      OnButtonClick = edtLogFileButtonClick
-    end
-    object chkMaintenance: TCheckBox
-      Left = 268
-      Height = 25
-      Top = 96
-      Width = 124
-      Caption = 'Maintenance Mode'
-      OnChange = chkMaintenanceChange
-      TabOrder = 4
-    end
-    object Label26: TLabel
-      Left = 12
-      Height = 15
-      Top = 432
-      Width = 85
-      Caption = 'LPMS ACM User:'
-      ParentColor = False
-    end
-    object edtACMUserID: TEdit
-      Left = 120
-      Height = 25
-      Top = 428
-      Width = 121
-      OnChange = edtHostChange
-      TabOrder = 18
-    end
-    object Label27: TLabel
-      Left = 12
-      Height = 15
-      Top = 462
-      Width = 83
-      Caption = 'LPMS ACM Port:'
-      ParentColor = False
-    end
-    object edtACMHost: TEdit
-      Left = 376
-      Height = 25
-      Top = 458
-      Width = 575
-      Anchors = [akTop, akLeft, akRight]
-      OnChange = edtHostChange
-      TabOrder = 21
-    end
-    object Bevel9: TBevel
-      Left = 0
-      Height = 2
-      Top = 490
-      Width = 968
-      Anchors = [akTop, akLeft, akRight]
-    end
-    object Label28: TLabel
-      Left = 268
-      Height = 15
-      Top = 432
-      Width = 87
-      Caption = 'LPMS ACM Pass:'
-      ParentColor = False
-    end
-    object edtACMPassword: TEdit
-      Left = 376
-      Height = 25
-      Top = 428
-      Width = 121
-      EchoMode = emPassword
-      OnChange = edtHostChange
-      PasswordChar = '*'
-      TabOrder = 19
-    end
-    object Label29: TLabel
-      Left = 268
-      Height = 15
-      Top = 462
-      Width = 86
-      Caption = 'LPMS ACM Host:'
-      ParentColor = False
-    end
-    object edtACMPort: TEdit
-      Left = 120
-      Height = 25
-      Top = 458
-      Width = 121
-      OnChange = edtHostChange
-      TabOrder = 20
     end
   end
   object actList: TActionList
