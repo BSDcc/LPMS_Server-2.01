@@ -397,7 +397,7 @@ private  { Private Declarations }
    procedure CallExtern(ThisType: integer);
    function  GetUser(ThisList: TStringList): boolean;
    function  GetRegistration(ThisUnique: string):boolean;
-   procedure RegisterUser(ThisList, ThisReply: TStringList);
+   function  RegisterUser(ThisList, ThisReply: TStringList): string;
    procedure DispLogMsg(ThisMsg: string);
    procedure DispLogMsg(ThisDate, ThisTime, ThisMsg: string);
    procedure OpenLog(FileName: string);
@@ -1442,12 +1442,12 @@ end;
 //---------------------------------------------------------------------------
 procedure TFLPMS_Main.tcpServerExecute(AContext: TIdContext);
 var
-   idx1                               : integer;
-   ThisSize                           : double;
-   Found                              : boolean;
-   Request, CodedReq, ThisMsg, Delim  : string;
-   ThisList, ThisReply                : TStringList;
-   This_Key_Priv                      : REC_Key_Priv;
+   idx1                                      : integer;
+   ThisSize                                  : double;
+   Found                                     : boolean;
+   Request, CodedReq, ThisMsg, Delim, RegKey : string;
+   ThisList, ThisReply                       : TStringList;
+   This_Key_Priv                             : REC_Key_Priv;
 
 begin
 
@@ -1765,6 +1765,7 @@ begin
 
 //--- Check whether this unique identifier has been registered before
 
+            DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Registratration is allowed for ''' + ThisList.Strings[6] + '''');
             DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Checking previous registrations for ''' + ThisList.Strings[5] + ''':');
 
             try
@@ -1772,7 +1773,7 @@ begin
                ThisReply := TStringList.Create;
 
                if (GetRegistration(ThisList.Strings[5]) = True) then
-                  RegisterUser(ThisList, ThisReply)
+                  RegKey := RegisterUser(ThisList, ThisReply)
                else begin
 
                   ThisReply.Add(IntToStr(REPLY_FAIL));
@@ -1785,7 +1786,7 @@ begin
 //--- Process the request
 
                AContext.Connection.IOHandler.WriteLn(Assemble(ThisReply,TYPE_CODED));
-               DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Request for registration completed');
+               DispLogMsg(IntToStr(AContext.Binding.Handle) + '    Request for registration completed' + RegKey);
                AContext.Connection.Disconnect();
                Exit;
 
@@ -2220,7 +2221,7 @@ end;
 //---------------------------------------------------------------------------
 // Procedure to register a new evaluation user
 //---------------------------------------------------------------------------
-procedure TFLPMS_Main.RegisterUser(ThisList, ThisReply: TStringList);
+function TFLPMS_Main.RegisterUser(ThisList, ThisReply: TStringList): string;
 var
    S1, ExpiryDate, ThisKey, TimeStamp : string;
    This_Key_Info                      : REC_Key_Values;
@@ -2272,6 +2273,7 @@ begin
          ThisReply.Add(IntToStr(ACTION_DISPMSG));
          ThisReply.Add('Registration Request Failed (' + PChar('      **Unexpected Data Base [users] error: ''' + Err.Message + '''') + ') - Please contact BlueCrane Software Development by sending an email to ' + ThisEmail + ' describing the events that lead up to this message');
 
+         Result := '';
          Exit;
 
       end;
@@ -2287,6 +2289,8 @@ begin
    ThisReply.Add(IntToStr(ACTION_UPDATEREG));
    ThisReply.Add('DBPrefix');
    ThisReply.Add(ThisList.Strings[6]);
+
+   Result := ', Key: ' + ThisKey;
 
 end;
 
